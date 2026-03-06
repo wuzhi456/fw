@@ -4,9 +4,9 @@
 
 ## 整体状态
 
-**阶段**：阶段 1 代码实现完毕，等待手动 F5 全链路验证  
-**当前里程碑**：M1 待验证（代码全部就绪，测试全绿，需 F5 跑通真实 VS Code 环境）  
-**下一目标**：M1 截图存档 → 进入阶段 2 规则引擎
+**阶段**：文档与规划更新完毕，等待代码实现  
+**当前里程碑**：文档/Prompts 全部更新完毕；M1 尚未开始  
+**下一目标**：Task 1.1 项目脚手架 → Task 1.2 MCP Server 骨架
 
 ---
 
@@ -20,8 +20,9 @@
   - 提出 KnowledgeProvider 接口，MVP 只实现 InfrastructureRulesProvider
   - 贡献不在于可视化，而在于主动检测叙事性规划的系统性盲区并注入
 - [x] 完成实验设计（Control vs Treatment 对照组，H1/H2/H3 假设）
-- [x] 确认关键技术决策（8 条，详见 `plan-functionWeaverMvp.prompt.md` 六）
+- [x] 確认关键技术决策（10 条，详见 `plan-functionWeaverMvp.prompt.md` 六）
 - [x] 制定完整实施计划（Tasks 1.1–5.2，含 Done Criteria）
+- [x] 确认架构方案：**Option A**（MCP 写入磁盘 + Extension 使用 `fs.watch()`）
 - [x] 完成文档结构拆分：
   - `plan-functionWeaverMvp.prompt.md`：系统架构 + 研究贡献 + 技术设计
   - `implementation-plan.prompt.md`：实施任务与里程碑
@@ -31,11 +32,13 @@
 
 ### 文档输出
 
-- [x] `.github/prompts/plan-functionWeaverMvp.prompt.md` — 主计划文档
-- [x] `.github/prompts/implementation-plan.prompt.md` — 实施计划（含 Done Criteria）
-- [x] `docs/techstack.md` — 技术栈
-- [x] `docs/PRD.md` — 产品需求
-- [x] `docs/progress.md` — 本文件
+- [x] `.github/prompts/plan-functionWeaverMvp.prompt.md` — 主计划文档（TL;DR、系统流程、设计决策全部更新为 Option A）
+- [x] `.github/prompts/implementation-plan.prompt.md` — 实施计划（Task 1.2/1.3/1.4 全部更新）
+- [x] `.github/prompts/techstack.prompt.md` — 技术栈（MCPBridge → SessionWatcher，移除 child_process）
+- [x] `.github/prompts/progress.prompt.md` — 本文件
+- [x] `docs/PRD.md` — 产品需求（工作流、工具输出、安装配置全部更新为 Option A）
+- [x] `docs/sequenceDiagram.md` — Option A 架构时序图（6 参与者、组件边界表、对毕表）
+- [x] `docs/Function Weaver Proposal.md` — 第二/三章更新（文件系统分流中间件、fs.watch 学术贡献）
 
 ---
 
@@ -44,10 +47,10 @@
 ### 阶段 1：基础设施 + 主干链路（预计 2–3 天）
 
 - [ ] **Task 1.1** — 项目脚手架（Python venv + Extension `yo code`）
-- [ ] **Task 1.2** — MCP Server 骨架（`mcp_server/__main__.py`，硬编码返回）
-- [ ] **Task 1.3** — Extension MCP 桥接层（`extension/src/mcp/client.ts`）
+- [ ] **Task 1.2** — MCP Server 骨架（`mcp_server/__main__.py`，写入 session 文件到磁盘）
+- [ ] **Task 1.3** — Extension 文件系统监听层（`session-watcher.ts`，`createFileSystemWatcher`）
 - [ ] **Task 1.4** — Webview 骨架（`<pre>` 展示 JSON，验证通信）
-- [ ] **[M1]** 主干验证：Copilot → MCP → Webview 单次完整流转
+- [ ] **[M1]** 主干验证：MCP 写入 session 文件 → Extension 检测 → Webview 展示
 
 ### 阶段 2：规则引擎与持久化（预计 3–4 天）
 

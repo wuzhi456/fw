@@ -7,7 +7,7 @@
 | 组件 | 语言 / 运行时 | 主要框架/库 | 职责 |
 |------|-------------|-----------|------|
 | MCP Server | Python ≥ 3.9 | FastMCP, jieba, difflib | 规则匹配、节点注入、数据持久化 |
-| VS Code Extension | TypeScript | VS Code Extension API | MCP桥接、Webview管理、Prompt文件注入 |
+| VS Code Extension | TypeScript | VS Code Extension API | 文件系统监听、Webview管理、Prompt文件注入 |
 | React Webview | TypeScript / React | ReactFlow, Vite | 可视化编辑、双向通信 |
 
 ---
@@ -62,16 +62,18 @@ MVP 唯一实现：`InfrastructureRulesProvider`（读取 `rules/web_app_baselin
 | 包/API | 用途 |
 |--------|------|
 | `vscode`（内置） | VS Code Extension API：命令、Webview、Output Channel、工作区 |
-| `child_process`（Node标准库） | 启动/监控 Python `mcp_server` 子进程 |
-| `fs/promises`（Node标准库） | 原子化文件写入（`tmp → fsync → rename`） |
+| `vscode.workspace.createFileSystemWatcher` | 监听 `.weaver/sessions/*.json`，检测 MCP 写入的新 session 文件 |
+| `fs/promises`（Node标准库） | 读取 session JSON 文件（原子化写入由 MCP Server 负责） |
 
-### MCP 通信
-- **MCPBridge**：stdio JSON-RPC，15 秒超时保护
-- Python 解释器查找顺序：`.venv/Scripts/python.exe` → conda → 系统 PATH
+### 文件系统监听（SessionWatcher）
+- **`vscode.workspace.createFileSystemWatcher('.weaver/sessions/*.json')`**
+- 监听 `onDidCreate` 事件：MCP Server 写入新 session 文件时自动触发
+- Extension 不启动也不管理 MCP Server 进程（由 VS Code 通过 `.vscode/mcp.json` 托管）
+- MCP Server 写入磁盘格式：`.weaver/sessions/{task_id}.json`，包含完整 `tree_data`
 
 ### Webview 弹起
 - `vscode.window.createWebviewPanel()` with `ViewColumn.Beside`
-- 检测到 MCP 返回 `tree_data` 时**立即**弹起，无需用户手动触发
+- 通过 `fs.watch()` 检测到新 session 文件写入时**立即**弹起，无需用户手动触发
 
 ### Prompt 文件注入策略
 

@@ -1,7 +1,7 @@
 ## Plan: Function Weaver MVP - 图谱驱动的人机协同规划系统
 
 **TL;DR**  
-构建一个"规划中间件"系统：用户在Copilot的Plan模式中进行自动多轮对话，Copilot理解需求后调用`weaver_plan_architecture`工具。MCP Server根据用户提取的核心功能关键词，通过规则库注入隐性基建节点，生成完整Function Tree。MCP在单次response中同时返回完整树（给Extension）与挂起信号（给Copilot），Extension拦截树数据展示用户可视化编辑的Webview。用户确认后将架构写入 `.github/prompts/functions.prompt.md`，用户在Chat中附加该文件后驱动Copilot继续生成代码。首批规则库8-15节点覆盖Web应用基础域（认证、日志、错误、限流），支持跨重启恢复、单任务串行、原子化保存。目标是端到端可重复、收敛的完整闭环，为CHI论文的"收敛性降低"评估提供工程基础。
+构建一个"规划中间件"系统，由两个独立组件构成：**Python MCP Server**（`pip install function-weaver-mcp`，真实 MCP 协议，Copilot 可自动调用）和 **VS Code Extension**（Marketplace，可视化层）。用户与 Copilot 对话后，Copilot 根据上下文**自主调用** `weaver_plan_architecture` 工具（无需用户显式触发）。MCP Server 通过规则库注入隐性基建节点，将完整 `tree_data` **原子化写入** `.weaver/sessions/{task_id}.json`，再向 Copilot 返回轻量挂起信号 `{status, message, task_id}`（不含 tree_data）。Extension 通过 `fs.watch()` 监听 session 目录，检测到新文件后读取 tree_data 并弹起 Webview。用户确认后将架构写入 `.github/prompts/functions.prompt.md`，附加到 Chat 中驱动 Copilot 继续生成代码。**两组件完全解耦**，通过文件系统通信（无 IPC、无 stdio 拦截）。首批规则库 8-15 节点覆盖 Web 应用基础域（认证、日志、错误、限流），支持跨重启恢复、单任务串行、原子化保存。
 
 ---
 
@@ -137,27 +137,25 @@ Copilot Plan模式生成的是**叙事性自然语言计划**（narrative plan�
 
 ### 完整工作流时序（Step-by-Step）
 
-1. **用户选择 Copilot Plan 模式** → Copilot内置驱动多轮对话（≥3轮），Extension无需干预
-2. **多轮对话** → Copilot主动提问；用户多轮回答；Copilot最后确认总结
-3. **调用工具** → Copilot触发`weaver_plan_architecture`（tool description约束已检查）
-4. **MCP处理** → 规则匹配、节点注入、生成完整Function Tree
-5. **单次Response** → `{status, message, task_id, tree_data}`
-6. **🔑 Extension拦截分发**：
-   - 提取`tree_data` → 发给Webview
-   - 返回`{status, message, task_id}` → 发给Copilot（挂起信号）
-7. **Webview自动弹起** → 在Chat旁边展示可编辑的架构图（无需用户手动操作）
-8. **用户编辑** → 增删改节点、依赖关系；2秒防抖自动保存session
-9. **点击确认** → 原子化保存、更新session、写入Prompt文件
+1. **用户与Copilot自由对话** → 任意轮数，讨论需求，提炼核心功能关键词
+2. **Copilot自主调用工具** → Copilot 基于上下文决策，自动调用 `weaver_plan_architecture`（真实 MCP，无需用户显式触发）
+3. **MCP处理** → 规则匹配、节点注入、生成完整 Function Tree
+4. **🔑 MCP写文件** → 原子化写入完整 `tree_data` 至 `.weaver/sessions/{task_id}.json`
+5. **MCP返回挂起信号** → 向 Copilot 返回 `{status, message, task_id}`（不含 tree_data）；Copilot 收到 `waiting_for_human` 后优雅挂起
+6. **Extension检测文件** → `fs.watch()` 检测到新 session 文件，读取 `tree_data`
+7. **Webview自动弹起** → 在Chat旁边展示可编辑的架构图（`ViewColumn.Beside`，无需用户操作）
+8. **用户编辑** → 增删改节点、依赖关系；2秒防抖自动保存session（中间态持久化）
+9. **点击确认** → 原子化保存终版架构到 `.weaver/active_architecture.json`
 10. **写入Prompt文件** → 生成 `.github/prompts/functions.prompt.md`，调用 `vscode.open` 自动打开
 11. **用户附加文件** → 在Chat附件区选择 `functions.prompt.md`（显示为「Prompt」标签）→ 发送"开始生成代码" → Copilot按结构生成代码
 
 ### 关键设计原则
 
-- **Copilot Plan模式多轮对话**：由Copilot内置驱动，tool description中的约束强制遵守"≥3轮+确认"
-- **Webview自动弹起**：Extension检测到`tree_data`时无延迟弹起（`ViewColumn.Beside`），不覆盖Chat
-- **拦截分发机制**：MCP返回完整response → Extension分离 → 对Copilot对话流透明
+- **Copilot自主调用（真实MCP）**：通过 `.vscode/mcp.json` 注册的真实 MCP Server，Copilot 可基于上下文自主决策调用，无需用户显式触发
+- **文件系统分流**：MCP Server 自身完成 `tree_data` 与挂起信号的分离——树数据写磁盘，轻量信号回 Copilot；Extension 不参与 MCP 通信链路
+- **Webview自动弹起**：Extension 通过 `fs.watch()` 检测到新 session 文件时无延迟弹起（`ViewColumn.Beside`），不覆盖Chat
+- **组件彻底解耦**：MCP Server 可独立使用（`pip install` + `.vscode/mcp.json`），Extension 是增强可视化层，两者无直接进程间通信
 - **会话自动保存**：编辑时2秒防抖存session，支持跨重启恢复
-- **无状态中间件**：Extension完全无状态，用户始终和Copilot对话
 
 ---
 
@@ -184,40 +182,45 @@ def weaver_plan_architecture(root_nodes: list[str]) -> dict:
         "root_nodes": ["企业微信登录", "文档树状目录", "富文本编辑器"]
     }
     
-    出参（Extension拦截前的完整response）：
+    写入磁盘（.weaver/sessions/{task_id}.json）的完整内容：
     {
-        "status": "waiting_for_human",
-        "message": "底座基建节点已匹配，功能图谱已生成。请在画板中审阅架构后继续。",
-        "task_id": "weaver_20260303_143022",  # 跨重启恢复凭证
-        "tree_data": {  # Extension会提取此字段发给Webview
-            "schema_version": "1.0.0",
-            "project_name": "文档管理系统",
-            "nodes": [
-                {
-                    "id": "auth_wechat",
-                    "label": "企业微信登录",
-                    "node_type": "core_feature",
-                    "status": "pending",
-                    "description": "OAuth2.0企业微信授权登录",
-                    "dependencies": [],
-                    "source": "user"  # 用于研究：user/rule/manual
-                },
-                {
-                    "id": "auth_token_refresh",
-                    "label": "Token自动刷新",
-                    "node_type": "infrastructure",
-                    "status": "pending",
-                    "description": "Access Token过期前3分钟自动续期",
-                    "dependencies": ["auth_wechat"],
-                    "source": "rule",
-                    "triggered_by": "auth_wechat"  # 日志专用，不在UI展示
-                }
-                // ... 其他节点
-            ]
-        }
+        "task_id": "weaver_20260303_143022",
+        "status": "waiting_confirmation",
+        "schema_version": "1.0.0",
+        "project_name": "文档管理系统",
+        "nodes": [
+            {
+                "id": "auth_wechat",
+                "label": "企业微信登录",
+                "node_type": "core_feature",
+                "status": "pending",
+                "description": "OAuth2.0企业微信授权登录",
+                "dependencies": [],
+                "source": "user"  # 用于研究：user/rule/manual
+            },
+            {
+                "id": "auth_token_refresh",
+                "label": "Token自动刷新",
+                "node_type": "infrastructure",
+                "status": "pending",
+                "description": "Access Token过期前3分钟自动续期",
+                "dependencies": ["auth_wechat"],
+                "source": "rule",
+                "triggered_by": "auth_wechat"  # 日志专用，不在UI展示
+            }
+            // ... 其他节点
+        ]
     }
     
-    注：Agent仅看到status/message/task_id，Extension拦截后提取tree_data
+    返回给 Copilot 的挂起信号（不含 tree_data）：
+    {
+        "status": "waiting_for_human",
+        "message": "底座基建节点已匹配，功能图谱已生成。请在 Function Weaver 画板中审阅架构后继续。",
+        "task_id": "weaver_20260303_143022"
+    }
+    
+    说明：WORKSPACE_ROOT 通过 .vscode/mcp.json 的 env.WORKSPACE_ROOT=${workspaceFolder} 注入，
+    MCP Server 据此确定 session 文件写入路径，无需 Extension 协调。
     ```
 
 **内部数据结构**：
@@ -317,52 +320,45 @@ def weaver_plan_architecture(root_nodes: list[str]) -> dict:
 
 ### 1.2 VS Code Extension (`extension/`)
 
-**职责**：MCP进程启动与监控、工具响应拦截分发、Webview生命周期管理、Prompt文件注入
+**职责**：文件系统监听（fs.watch）、Webview生命周期管理、Prompt文件注入
 
 **关键设计原则**：
-- Extension **不驱动**多轮对话流程（由Copilot Plan模式内置）
-- Extension **仅拦截**工具调用的响应（分离tree_data），不修改对话内容
-- Extension **无状态参与**整个规划过程，用户始终和Copilot对话，Extension只做中间件
+- Extension **不参与** MCP 通信链路（Copilot 直接与 Python MCP Server 通信，Extension 不介入）
+- Extension **监听文件系统**：检测到新 session 文件时自动弹起 Webview，读取 tree_data
+- Extension **完全解耦**：无需感知 MCP Server 的启动状态，只关心 `.weaver/sessions/` 目录
 
 **核心模块**：
 
-#### A. MCP Client 桥接层 (`extension/src/mcp/client.ts`)
+#### A. 文件系统监听层 (`extension/src/watcher/session-watcher.ts`)
 
 ```typescript
-class MCPBridge {
-  private process: ChildProcess;
-  private pendingRequests: Map<string, {resolve, reject}>;
+class SessionWatcher {
+  private watcher: vscode.FileSystemWatcher;
+  private webviewManager: WebviewManager;
   
-  async startServer(): Promise<void> {
-    // 1. 查找Python解释器（优先.venv/Scripts/python.exe → conda → 系统python）
-    // 2. 启动 `python -m mcp_server` via stdio
-    // 3. 监听stderr日志 → 转发到VS Code Output Channel
-    // 4. 设置15秒超时保护
-  }
-  
-  async callTool(name: string, args: any): Promise<any> {
-    // 发送JSON-RPC请求到MCP Server
-    const response = await this.sendRequest({
-      method: "tools/call",
-      params: { name, arguments: args },
-      timeout: 15000  // 15秒超时
+  start(workspaceRoot: string): void {
+    // 监听 .weaver/sessions/*.json 新文件创建事件
+    const pattern = new vscode.RelativePattern(
+      workspaceRoot,
+      '.weaver/sessions/*.json'
+    );
+    this.watcher = vscode.workspace.createFileSystemWatcher(pattern);
+    
+    // 检测到新 session 文件（MCP Server 写入）时触发
+    this.watcher.onDidCreate(async (uri) => {
+      const raw = await vscode.workspace.fs.readFile(uri);
+      const sessionData = JSON.parse(Buffer.from(raw).toString());
+      if (sessionData.status === 'waiting_confirmation') {
+        // 读取 tree_data，弹起 Webview（无需任何 MCP 通信）
+        await this.webviewManager.showTree(sessionData, sessionData.task_id);
+      }
     });
     
-    // ✅ 关键：拦截分发逻辑（仅针对weaver_plan_architecture）
-    if (name === 'weaver_plan_architecture' && response.tree_data) {
-      // 1. 提取完整树数据发给Webview（不关闭Chat窗口）
-      await this.webviewManager.showTree(response.tree_data, response.task_id);
-      
-      // 2. 净化后返回给Copilot（仅保留status/message/task_id）
-      // Copilot会看到"挂起"信号并停止输出，等待用户在Webview中确认
-      return {
-        status: response.status,
-        message: response.message,
-        task_id: response.task_id
-      };
-    }
-    return response;
+    // 启动时扫描已存在的 waiting_confirmation session（跨重启恢复）
+    this.recoverPendingSessions(workspaceRoot);
   }
+  
+  dispose(): void { this.watcher.dispose(); }
 }
 ```
 
@@ -690,7 +686,7 @@ FunctionWeaver/
 
 ## 六、关键决策记录 (Key Decisions)
 
-1. **stdio拦截分发**：MCP单次返回完整response，Extension分离tree_data（给Webview）与status（给Agent）
+1. **文件系统分流**：MCP Server 自身原子化写入完整 tree_data 到 `.weaver/sessions/{task_id}.json`，再向 Copilot 返回轻量挂起信号（不含 tree_data）；Extension 通过 `fs.watch()` 旁观文件系统，两者无直接通信
 2. **节点ID策略**：语义化ID（`auth_login`），允许人工编辑，不强制UUID
 3. **依赖语义**：严格前置依赖（必须先完成），不支持推荐依赖
 4. **多仓结构**：在当前workspace下按子目录组织（`mcp_server/`、`extension/`），暂不拆仓
@@ -698,7 +694,8 @@ FunctionWeaver/
 6. **首批规则领域**：通用Web应用（认证+日志+错误+限流），8-15节点
 7. **研究字段**：`source`（user/rule/manual）、`triggered_by`用于论文复盘，不在UI展示
 8. **唯一注入路径——Prompt文件写入**：唯一注入机制是写入 `.github/prompts/functions.prompt.md`。VS Code Copilot 对该目录下的 `.prompt.md` 文件以"结构化指令"方式处理（Chat附件区显示"Prompt"标签），语义传递质量显著优于纯文本粘贴。无需L1/L2降级机制，路径唯一，流程简洁，符合 CHI human-in-the-loop 设计（用户手动附加文件 = 明确确认动作，可作为研究数据点）
-9. **`vscode.lm.registerTool()` 而非 `McpServerDefinitionProvider`**：Extension 通过 `vscode.lm.registerTool()` 注册工具，其 `invoke()` 方法在工具调用时被触发，Extension 可在此处拦截完整 response 并分离 `tree_data`，再将净化后的挂起信号返回给 Copilot。若改用 `McpServerDefinitionProvider`，Copilot 会直接通过 stdio 与 Python 进程通信，Extension 无法介入拦截层
+9. **`McpServerDefinitionProvider` 而非 `vscode.lm.registerTool()`**（架构最终决策）：采用真实 MCP 协议（`.vscode/mcp.json` + Python Server），Copilot 可基于上下文自主调用工具，无需用户显式触发。Extension 改用 `fs.watch()` 监听 `.weaver/sessions/` 目录获取 tree_data，不再介入 MCP 通信链路。两个组件完全解耦，可独立发布（PyPI + Marketplace）。
+10. **`registerTool` 验证结论（已归档）**：通过 `verify-registerTool` 验证项目确认，`vscode.lm.registerTool()` 的 `invoke()` **仅在用户在聊天框显式选中工具时触发**，Copilot 不会基于 modelDescription 自主调用。这是 VS Code LM API 的设计定位，不适合"Copilot 自主规划"场景。最终选择真实 MCP（Decision #9）取代此方案。验证代码保留在 `verify-registerTool/` 目录供参考。
 
 ---
 

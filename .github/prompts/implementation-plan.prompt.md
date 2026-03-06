@@ -40,43 +40,58 @@ npm install  # 安装依赖
 
 ```python
 from fastmcp import FastMCP
+import json, os, pathlib, tempfile, time
 
 mcp = FastMCP("FunctionWeaver")
 
 @mcp.tool()
 def weaver_plan_architecture(root_nodes: list[str]) -> dict:
-    # 调用前必须：(1) >=3轮对话 (2) 用户已确认所有核心功能模块
-    # 阶段1：硬编码返回，用于验证链路
+    # 阶段1：硬编码树数据，用于验证文件系统分流链路
+    task_id = f"weaver_stub_{int(time.time())}"
+    tree_data = {
+        "task_id": task_id,
+        "status": "waiting_confirmation",
+        "schema_version": "1.0.0",
+        "project_name": "stub",
+        "nodes": [
+            {"id": "stub_feature", "label": root_nodes[0] if root_nodes else "功能A",
+             "node_type": "core_feature", "status": "pending",
+             "dependencies": [], "source": "user"},
+            {"id": "stub_infra", "label": "（注入）全局日志",
+             "node_type": "infrastructure", "status": "pending",
+             "dependencies": ["stub_feature"], "source": "rule",
+             "triggered_by": "stub_feature"}
+        ]
+    }
+    # 🔑 核心：写入 session 文件（Extension 通过 fs.watch 检测）
+    workspace_root = os.environ.get("WORKSPACE_ROOT", ".")
+    session_dir = pathlib.Path(workspace_root) / ".weaver" / "sessions"
+    session_dir.mkdir(parents=True, exist_ok=True)
+    session_path = session_dir / f"{task_id}.json"
+    tmp_path = session_path.with_suffix(".tmp")
+    tmp_path.write_text(json.dumps(tree_data, ensure_ascii=False, indent=2), encoding="utf-8")
+    tmp_path.rename(session_path)  # 原子化重命名
+    
+    # 只返回挂起信号（不含 tree_data）
     return {
         "status": "waiting_for_human",
-        "message": "架构已生成，请在画板中审阅后继续。",
-        "task_id": "weaver_stub_001",
-        "tree_data": {
-            "schema_version": "1.0.0",
-            "project_name": "stub",
-            "nodes": [
-                {"id": "stub_feature", "label": root_nodes[0] if root_nodes else "功能A",
-                 "node_type": "core_feature", "status": "pending",
-                 "dependencies": [], "source": "user"},
-                {"id": "stub_infra", "label": "（注入）全局日志",
-                 "node_type": "infrastructure", "status": "pending",
-                 "dependencies": ["stub_feature"], "source": "rule",
-                 "triggered_by": "stub_feature"}
-            ]
-        }
+        "message": "架构已生成，请在 Function Weaver 画板中审阅后继续。",
+        "task_id": task_id
     }
 
 if __name__ == "__main__":
     mcp.run(transport="stdio")
 ```
 
-**Done Criteria**：向 stdin 发送 JSON-RPC 调用，stdout 返回包含 `tree_data` 的 JSON
+**Done Criteria**：调用工具后，`.weaver/sessions/{task_id}.json` 被写入（含完整 nodes）；向 Copilot 返回的响应**不含 `tree_data` 字段**
 
 **测试**（`mcp_server/tests/test_stub.py`）：
 ```python
-import subprocess, json
+import subprocess, json, os, tempfile, pathlib
 
-def test_stub_returns_tree_data():
+def test_stub_writes_session_file_and_returns_signal():
+    session_dir = tempfile.mkdtemp()
+    env = {**os.environ, "WORKSPACE_ROOT": session_dir}
     payload = json.dumps({
         "jsonrpc": "2.0", "id": 1,
         "method": "tools/call",
@@ -84,45 +99,77 @@ def test_stub_returns_tree_data():
     })
     result = subprocess.run(
         [".venv/Scripts/python.exe", "-m", "mcp_server"],
-        input=payload, capture_output=True, text=True, timeout=10
+        input=payload, capture_output=True, text=True, timeout=10, env=env
     )
     data = json.loads(result.stdout)
-    assert "tree_data" in data["result"]
-    assert len(data["result"]["tree_data"]["nodes"]) >= 1
+    response = data["result"]
+    # Copilot 侧不应看到 tree_data
+    assert "tree_data" not in response
+    assert response["status"] == "waiting_for_human"
+    task_id = response["task_id"]
+    # session 文件应被写入磁盘
+    sessions = list(pathlib.Path(session_dir).glob(".weaver/sessions/*.json"))
+    assert len(sessions) == 1
+    session_data = json.loads(sessions[0].read_text(encoding="utf-8"))
+    assert session_data["task_id"] == task_id
+    assert len(session_data["nodes"]) >= 1
 ```
 运行：`.venv\Scripts\python.exe -m pytest mcp_server/tests/test_stub.py -v`
 
 ---
 
-#### Task 1.3 — Extension MCP 桥接层
+#### Task 1.3 — Extension 文件系统监听层
 
-**文件**：`extension/src/mcp/client.ts`
+**文件**：`extension/src/watcher/session-watcher.ts`
 
 重点实现：
-- `startServer()`：查找 `.venv/Scripts/python.exe` → `python`，启动子进程
-- `callTool()`：JSON-RPC over stdio，15秒超时
-- 拦截分发：检测到 `tree_data` 字段时 → 调用 `webviewManager.showTree()`，向 Copilot 只返回净化后的 `{status, message, task_id}`
+- `SessionWatcher.start(workspaceRoot)`：使用 `vscode.workspace.createFileSystemWatcher` 监听 `.weaver/sessions/*.json`
+- `onDidCreate` 回调：读取新 session 文件 → 检查 `status === 'waiting_confirmation'` → 调用 `webviewManager.showTree()` 
+- `recoverPendingSessions()`：启动时扫描已有 waiting_confirmation session，自动恢复
+- **不需要**启动 Python 子进程（MCP Server 由 VS Code 通过 `mcp.json` 自动管理）
 
-**Done Criteria**：在 Extension 的 Output Channel 能看到 MCP Server 的 stderr 日志；调用 `weaver_plan_architecture` 后控制台打印出完整 response，且 tree_data 被成功提取
+**Done Criteria**：在 `.weaver/sessions/` 目录下新建一个 `test_session.json`（手动写入，模拟 MCP Server 写入），Extension 自动检测并弹起 Webview，Output Channel 显示 `[Weaver][INFO] session detected: test_session`
 
-**测试**（`extension/src/mcp/client.test.ts`）：
+**测试**（`extension/src/watcher/session-watcher.test.ts`）：
 ```typescript
-import { MCPBridge } from './client';
+import { SessionWatcher } from './session-watcher';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import * as os from 'os';
 
-test('callTool splits tree_data from copilot response', async () => {
+test('onDidCreate triggers showTree for waiting_confirmation session', async () => {
   const shown: any[] = [];
-  const mockWM = { showTree: async (tree: any, id: string) => shown.push({ tree, id }) };
-  const bridge = new MCPBridge(mockWM as any);
-  bridge._mockResponse = {
-    status: 'waiting_for_human', message: 'ok', task_id: 't1',
-    tree_data: { schema_version: '1.0.0', nodes: [] }
+  const mockWM = { showTree: async (data: any, id: string) => shown.push({ data, id }) };
+  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'weaver-'));
+  const sessionDir = path.join(tmpDir, '.weaver', 'sessions');
+  await fs.mkdir(sessionDir, { recursive: true });
+
+  const watcher = new SessionWatcher(mockWM as any);
+  await watcher.start(tmpDir);
+
+  // 模拟 MCP Server 写入 session 文件
+  const sessionData = {
+    task_id: 'test_001',
+    status: 'waiting_confirmation',
+    nodes: [{ id: 'feat_a', label: '功能A', source: 'user' }]
   };
-  const result = await bridge.callTool('weaver_plan_architecture', { root_nodes: ['登录'] });
-  // Copilot 侧只应看到净化后的三字段
-  expect(result).toEqual({ status: 'waiting_for_human', message: 'ok', task_id: 't1' });
-  expect((result as any).tree_data).toBeUndefined();
-  // Webview 侧应收到树数据
-  expect(shown[0].tree.schema_version).toBe('1.0.0');
+  await fs.writeFile(
+    path.join(sessionDir, 'test_001.json'),
+    JSON.stringify(sessionData)
+  );
+
+  // 等待 watcher 触发（文件系统事件异步）
+  await new Promise(r => setTimeout(r, 200));
+  expect(shown.length).toBe(1);
+  expect(shown[0].id).toBe('test_001');
+  watcher.dispose();
+});
+
+test('ignores session with status !== waiting_confirmation', async () => {
+  const shown: any[] = [];
+  const mockWM = { showTree: async (data: any, id: string) => shown.push({ data, id }) };
+  // ... 写入 status=confirmed 的文件，验证不触发 showTree
+  expect(shown.length).toBe(0);
 });
 ```
 运行：`cd extension && npm test`
@@ -135,18 +182,18 @@ test('callTool splits tree_data from copilot response', async () => {
 
 暂不用 ReactFlow，先用 `<pre>` 标签渲染原始 JSON，验证 Extension ↔ Webview 消息通信
 
-**Done Criteria**：调用工具后，Webview 在 Chat 旁边自动弹起，显示 `tree_data` 的 JSON 内容
+**Done Criteria**：在 `.weaver/sessions/` 目录下手动写入一个 `waiting_confirmation` 状态的 session JSON，Webview 在 Chat 旁边自动弹起，显示 `nodes` 的 JSON 内容
 
 **测试**（手动 + 截图存档）：
 1. F5 启动 Extension Development Host
-2. 在 Chat 中触发工具调用，传入 `root_nodes=["登录"]`
+2. 在 `.weaver/sessions/` 目录下手动写入一个测试 session JSON（模拟 MCP Server 写入）
 3. 验证：
    - [ ] Webview 在 Chat 右侧自动弹起，不覆盖 Chat
-   - [ ] `<pre>` 显示包含 `tree_data` 的完整 JSON
+   - [ ] `<pre>` 显示 session 的 nodes JSON 内容
    - [ ] Output Channel 有 `[Weaver][INFO] showTree called` 日志
 4. 截图保存至 `docs/screenshots/m1-trunk-verified.png`
 
-**这是主干链路验证节点**：用户 → Copilot → MCP → Extension → Webview 全链路打通
+**这是主干链路验证节点**：MCP Server 写文件 → Extension fs.watch 检测 → Webview 弹起 全链路打通
 
 ---
 
