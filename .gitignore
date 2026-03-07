@@ -205,3 +205,14 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Function Weaver — 项目特定
+.venv/
+.weaver/
+extension/node_modules/
+extension/out/
+extension/webview-ui/node_modules/
+extension/webview-ui/dist/
+*.vsix
+verify-registerTool/node_modules/
+verify-registerTool/out/

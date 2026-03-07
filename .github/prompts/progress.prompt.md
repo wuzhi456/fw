@@ -4,9 +4,9 @@
 
 ## 整体状态
 
-**阶段**：文档与规划更新完毕，等待代码实现  
-**当前里程碑**：文档/Prompts 全部更新完毕；M1 尚未开始  
-**下一目标**：Task 1.1 项目脚手架 → Task 1.2 MCP Server 骨架
+**阶段**：阶段 1 完成 ✅，进入阶段 2（规则引擎与持久化）  
+**当前里程碑**：**M1 已验证** ✅（2026-03-08 截图存档）  
+**下一目标**：Task 2.1 KnowledgeProvider 接口 + InfrastructureRulesProvider
 
 ---
 
@@ -44,13 +44,28 @@
 
 ## 尚未完成事项（全部为代码实现）
 
-### 阶段 1：基础设施 + 主干链路（预计 2–3 天）
+### 阶段 1 代码实现
 
-- [ ] **Task 1.1** — 项目脚手架（Python venv + Extension `yo code`）
-- [ ] **Task 1.2** — MCP Server 骨架（`mcp_server/__main__.py`，写入 session 文件到磁盘）
-- [ ] **Task 1.3** — Extension 文件系统监听层（`session-watcher.ts`，`createFileSystemWatcher`）
-- [ ] **Task 1.4** — Webview 骨架（`<pre>` 展示 JSON，验证通信）
-- [ ] **[M1]** 主干验证：MCP 写入 session 文件 → Extension 检测 → Webview 展示
+- [x] **Task 1.1** — 项目脚手架（Python `.venv` + Extension TypeScript 结构）
+  - `.venv/` Python 3.12（fastmcp, jieba, pytest 已安裃）
+  - `extension/` TypeScript 结构，编译零错误，6 个 `.js` 产出
+- [x] **Task 1.2** — MCP Server 骨架（`mcp_server/__main__.py`）
+  - 写入 session 文件到磁盘（验证：产出 `task_id`, `nodes[user+rule]`）
+  - 向 Copilot 返回仅含 `{status, message, task_id}` 的挂起信号
+- [x] **Task 1.3** — Extension 文件系统监听层（`session-watcher.ts`）
+  - `createFileSystemWatcher` 监听 `.weaver/sessions/*.json`
+  - `onDidCreate` + `recoverPendingSessions` 已实现
+- [x] **Task 1.4** — Webview 骨架（`webview/manager.ts`）
+  - `<pre>` 展示 JSON，自动弹起，`ViewColumn.Beside`
+  - 编译零错误
+- [x] **`.vscode/mcp.json`** — VS Code MCP 配置，指向 `.venv` 解释器，注入 `WORKSPACE_ROOT`
+- [x] **`.vscode/launch.json`** — F5 Extension Development Host 调试配置
+- [x] **`.vscode/tasks.json`** — compile/watch 任务
+- [x] **[M1] 主干链路验证** ✅ 2026-03-08
+  - Plan 模式通过 custom answer 中嵌入指令成功触发工具调用
+  - MCP Server 写盘 `weaver_stub_1772899806.json` 成功
+  - Extension `fs.watch` 检测到新 session 文件
+  - Webview 在 Chat 旁边（ViewColumn.Beside）自动弹起，显示 JSON 节点
 
 ### 阶段 2：规则引擎与持久化（预计 3–4 天）
 
@@ -86,21 +101,9 @@
 
 ## 下一步（立即开始）
 
-**Task 1.1 — 项目脚手架**
+**Task 2.1 — KnowledgeProvider 接口 + InfrastructureRulesProvider**
 
-```powershell
-# MCP Server 环境
-python -m venv .venv
-.venv\Scripts\pip install fastmcp jieba
-
-mkdir mcp_server, mcp_server\tools, mcp_server\engine, mcp_server\rules
-New-Item mcp_server\__main__.py, mcp_server\__init__.py
-
-# Extension 脚手架
-npm install -g yo generator-code
-cd extension
-yo code  # 选 TypeScript Extension (without bundler)
-npm install
-```
-
-**Done Criteria**：`python -m mcp_server` 启动不报错；`F5` 能在 Extension Development Host 中加载插件
+1. 创建 `mcp_server/engine/provider.py`（KnowledgeProvider ABC）
+2. 创建 `mcp_server/engine/infrastructure_provider.py`（读取规则库 JSON）
+3. 创建 `mcp_server/rules/web_app_baseline.json`（5 个触发域，8-15 节点）
+4. 运行测试：`.venv\Scripts\python.exe -m pytest mcp_server/tests/test_provider.py -v`
