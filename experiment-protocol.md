@@ -183,3 +183,4 @@ Any deviation from this protocol must be recorded before analysis.
 | Date | Deviation | Reason | Impact | Approved by |
 | --- | --- | --- | --- | --- |
 | 2026-05-12 | Initial protocol frozen. | P0 setup. | None. | Project owner / agent record |
+| 2026-05-12 | P4 single-task batch `task-async-form`: nine parallel agent runs; `full-prompt/rep-02` missing `src/index.css` repaired before scoring; `experience-skill/rep-03` metadata relocated from `output/` to `rep-03/`. | Automated batch + agent omission. | Minor artifact hygiene; logged in `experiments/runs/task-async-form/BATCH_SUMMARY.md` and run notes. | Operator review |

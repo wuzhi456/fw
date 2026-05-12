@@ -1,0 +1,28 @@
+{
+  "run_path": "experiments/runs/task-async-form/full-prompt/rep-01",
+  "metrics": {
+    "component_boundaries": 3,
+    "request_state_modeling": 3,
+    "reuse_consistency": 2,
+    "test_coverage": 1,
+    "maintainability": 3
+  },
+  "code_quality_points": 25.67,
+  "summary_comment": "The output separates concerns cleanly: a thin `App` entry, `RegistrationForm` for the workflow, `FormErrorBoundary` for subtree isolation, and `mockRemoteApi` for async behavior. Request and mutation paths use explicit discriminated state (`RemoteState`), abort signals, debouncing, and stale-run guards so logic is not success-path-only. Reuse is generally solid (`mapRemote`, shared delay/abort patterns) but `document.querySelector('.form-panel')` bypasses the ref-based style used elsewhere. There are no automated tests or test scripts despite highly testable pure mapping and state transitions, so edge-case verification is left to manual runs. Overall the TypeScript is readable, typed, and easy to follow with minimal scope creep.",
+  "files_reviewed": [
+    "package.json",
+    "src/App.tsx",
+    "src/App.css",
+    "src/FormErrorBoundary.tsx",
+    "src/main.tsx",
+    "src/mockRemoteApi.ts",
+    "src/index.css",
+    "index.html",
+    "vite.config.ts",
+    "eslint.config.js",
+    "tsconfig.json",
+    "tsconfig.app.json",
+    "tsconfig.node.json",
+    "src/vite-env.d.ts"
+  ]
+}

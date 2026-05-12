@@ -1,0 +1,7 @@
+{
+  "task_id": "task-async-form",
+  "group": "baseline",
+  "replicate": 3,
+  "injected_experience_count": 0,
+  "intervention_path": "experiments/interventions/baseline.md"
+}

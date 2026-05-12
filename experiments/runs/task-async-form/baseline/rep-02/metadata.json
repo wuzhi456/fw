@@ -1,0 +1,11 @@
+{
+  "run_id": "baseline-task-async-form-rep-02-2026-05-12",
+  "task_id": "task-async-form",
+  "group": "baseline",
+  "replicate": 2,
+  "base_requirement_path": "experiments/tasks/task-async-form.md",
+  "intervention_path": "experiments/interventions/baseline.md",
+  "injected_experience_count": 0,
+  "status": "success",
+  "notes": "Vite+React+TS in output/ only. Mock api.ts with delays; token field validated async on blur; submit disabled until server reports valid and name non-empty; user can fix token to ACCEPT and submit successfully. npm install && npm run build passed."
+}

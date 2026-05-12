@@ -1,0 +1,7 @@
+{
+  "group": "experience-skill",
+  "replicate": 1,
+  "task": "task-async-form",
+  "injected_experience_count": 5,
+  "intervention_path": "experiments/interventions/experience-skill.md"
+}

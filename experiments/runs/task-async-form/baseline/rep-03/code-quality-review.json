@@ -1,0 +1,20 @@
+{
+  "run_path": "experiments/runs/task-async-form/baseline/rep-03",
+  "metrics": {
+    "component_boundaries": 2,
+    "request_state_modeling": 2,
+    "reuse_consistency": 3,
+    "test_coverage": 0,
+    "maintainability": 3
+  },
+  "code_quality_points": 23.33,
+  "summary_comment": "The mock API lives in a dedicated module with clear result types, while `App.tsx` holds all UI and interaction logic in one place—reasonable for size but not much internal decomposition. Username async status is modeled with an explicit discriminated union (`idle` / `checking` / `invalid` / `valid`), whereas submit uses separate booleans and strings and blur-triggered validation has no stale-request token, so concurrent validations could finish out of order. Patterns match typical React and TypeScript usage without extra abstractions. There are no tests or test doubles for edge cases. Overall the code is short, typed, and easy to follow.",
+  "files_reviewed": [
+    "src/App.tsx",
+    "src/main.tsx",
+    "src/mockApi.ts",
+    "src/index.css",
+    "src/vite-env.d.ts",
+    "package.json"
+  ]
+}

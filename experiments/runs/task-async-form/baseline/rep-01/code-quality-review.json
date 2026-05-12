@@ -1,0 +1,17 @@
+{
+  "run_path": "experiments/runs/task-async-form/baseline/rep-01",
+  "metrics": {
+    "component_boundaries": 2,
+    "request_state_modeling": 2,
+    "reuse_consistency": 3,
+    "test_coverage": 0,
+    "maintainability": 2
+  },
+  "code_quality_points": 21.0,
+  "summary_comment": "The UI lives almost entirely in one `App` component (~200 lines) with mock HTTP handled in a separate Vite plugin, which is a sensible split between app and dev-server concerns without pointless fragmentation. Request and mutation paths are mostly explicit: validation uses a monotonic request id and debounce cleanup to avoid stale UI; submit uses a small state machine (`idle` | `loading` | `success` | `error`) and disables the button while loading, though submit does not mirror the validation-style stale-response guard. Local patterns are consistent (`useCallback`, typed JSON shapes, small helpers in `vite.config.ts`). There are no tests or exported test hooks under `output/`. Overall readability and naming are good, but further changes would benefit from extracting the access-code field or submit banner into subcomponents.",
+  "files_reviewed": [
+    "src/App.tsx",
+    "src/main.tsx",
+    "vite.config.ts"
+  ]
+}

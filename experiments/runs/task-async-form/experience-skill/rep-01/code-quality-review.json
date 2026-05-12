@@ -1,0 +1,24 @@
+{
+  "run_path": "experiments/runs/task-async-form/experience-skill/rep-01",
+  "metrics": {
+    "component_boundaries": 3,
+    "request_state_modeling": 3,
+    "reuse_consistency": 3,
+    "test_coverage": 1,
+    "maintainability": 3
+  },
+  "code_quality_points": 30.33,
+  "summary_comment": "The output splits responsibilities cleanly: a thin App, a focused AsyncForm, shared types, a dedicated retry/timeout helper in apiClient, and hooks for debouncing and keyed remote validation with explicit generation and abort handling so stale responses do not apply. Request and field state are modeled with explicit discriminated-style status unions rather than implicit booleans only. Local patterns and naming stay consistent across modules. There are no automated tests or test runner wiring despite several edge cases (retry, abort, idempotency) that would benefit from them, so test coverage is weak even though the code is structured to be testable. Overall readability and scope control are strong.",
+  "files_reviewed": [
+    "src/App.tsx",
+    "src/AsyncForm.tsx",
+    "src/apiClient.ts",
+    "src/main.tsx",
+    "src/mockRemoteApi.ts",
+    "src/styles.css",
+    "src/types.ts",
+    "src/useDebouncedValue.ts",
+    "src/useKeyedRemoteValidator.ts",
+    "vite.config.ts"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "run_path": "experiments/runs/task-async-form/baseline/rep-02",
+  "metrics": {
+    "component_boundaries": 2,
+    "request_state_modeling": 2,
+    "reuse_consistency": 3,
+    "test_coverage": 0,
+    "maintainability": 3
+  },
+  "code_quality_points": 23.33,
+  "summary_comment": "The mock API lives in `api.ts` and the UI in `App.tsx`, which is a sensible split without pointless fragmentation; the whole form could be broken into smaller presentational pieces but remains coherent. Async work is modeled well for the token via a discriminated union (`idle` / `checking` / `invalid` / `valid`) and a submit busy flag, though there is no sequencing or cancellation to avoid stale validation results if blur or overlapping requests race. Reuse is strong: shared delay, token validation reused inside submit, and consistent TypeScript types. There are no automated tests or test harness in the output, so edge cases and regressions are unverified. The codebase is small, typed, and easy to read and change aside from those implicit async hazards.",
+  "files_reviewed": [
+    "index.html",
+    "src/App.tsx",
+    "src/api.ts",
+    "src/main.tsx",
+    "src/index.css",
+    "src/vite-env.d.ts"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "run_path": "experiments/runs/task-async-form/experience-skill/rep-03",
+  "metrics": {
+    "component_boundaries": 2,
+    "request_state_modeling": 3,
+    "reuse_consistency": 3,
+    "test_coverage": 0,
+    "maintainability": 3
+  },
+  "code_quality_points": 25.67,
+  "summary_comment": "Remote validation and submit flows use explicit discriminated state (`UsernameRemoteState`), refs for stale debounced requests and submit locking, and a dedicated `remoteApi.ts` with typed results—strong request/state modeling and reuse. Component boundaries are reasonable (API module plus an inline hook) but almost all UI logic lives in one large `App.tsx`, which is workable yet not ideal for separation. There are no automated tests or test scripts in the output despite edge cases (debounce races, 422/500, retry) that would benefit from them, so test coverage scores at the bottom of the band. Overall the TypeScript is readable and consistently structured.",
+  "files_reviewed": [
+    "output/package.json",
+    "output/src/App.tsx",
+    "output/src/App.css",
+    "output/src/main.tsx",
+    "output/src/remoteApi.ts",
+    "output/src/index.css",
+    "output/index.html",
+    "output/vite.config.ts",
+    "output/eslint.config.js",
+    "output/tsconfig.json",
+    "output/tsconfig.app.json",
+    "output/tsconfig.node.json"
+  ]
+}

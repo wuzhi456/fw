@@ -1,0 +1,19 @@
+{
+  "run_id": "task-async-form_experience-skill_rep-03_2026-05-12",
+  "task_id": "task-async-form",
+  "group": "experience-skill",
+  "replicate": 3,
+  "base_requirement_path": "experiments/tasks/task-async-form.md",
+  "intervention_path": "experiments/interventions/experience-skill.md",
+  "injected_experience_count": 5,
+  "injected_experience_ids": [
+    "form-duplicate-submit-guard",
+    "form-async-validation-feedback",
+    "form-submit-recovery",
+    "async-retry-recover",
+    "state-optimistic-rollback"
+  ],
+  "status": "valid",
+  "duration_minutes": null,
+  "notes": "metadata.json was initially under output/; consolidated to rep-03/ by batch repair."
+}

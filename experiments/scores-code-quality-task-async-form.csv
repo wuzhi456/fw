@@ -1,0 +1,10 @@
+task_id,group,replicate,reviewer_id,component_boundaries,request_state_modeling,reuse_consistency,test_coverage,maintainability,code_quality_points_0_35
+task-async-form,baseline,rep-01,subagent-1,2,2,3,0,2,21.0
+task-async-form,baseline,rep-02,subagent-1,2,2,3,0,3,23.33
+task-async-form,baseline,rep-03,subagent-1,2,2,3,0,3,23.33
+task-async-form,experience-skill,rep-01,subagent-1,3,3,3,1,3,30.33
+task-async-form,experience-skill,rep-02,subagent-1,2,3,3,1,2,25.67
+task-async-form,experience-skill,rep-03,subagent-1,2,3,3,0,3,25.67
+task-async-form,full-prompt,rep-01,subagent-1,3,3,2,1,3,25.67
+task-async-form,full-prompt,rep-02,subagent-1,2,3,2,1,2,23.33
+task-async-form,full-prompt,rep-03,subagent-1,2,3,2,1,2,23.33
