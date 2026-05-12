@@ -219,6 +219,29 @@ Human Control Gate:
 3. Agents must not change group assignment, sampling rules, retry rules, failed-run status, scoring anchors, or conclusion wording without explicit human instruction.
 4. Final claims about Skill effectiveness must be reviewed and approved by the human operator after seeing the score table, context-length records, failed-run log, and threat-validity notes.
 
+Execution Quality Audit:
+
+P4/P5 must evaluate experiment execution quality separately from generated application quality. A run with high generated-code quality is not valid evidence if protocol execution was weak.
+
+Execution quality is scored before result scoring:
+
+| Dimension | Pass condition |
+| --- | --- |
+| Protocol adherence | Task prompt, group intervention, model/runtime setting, and allowed tools match `experiment-protocol.md`. |
+| Run integrity | Start time, end time, operator, group, task id, run id, retry status, and failure status are recorded. |
+| Group isolation | Baseline, Experience Skill, and Full Prompt inputs differ only by the planned group intervention. |
+| Randomization / ordering | Run order follows the pre-generated randomization table or records an explicit deviation. |
+| Anonymization | Outputs are anonymized before scoring, and group labels are hidden from reviewers. |
+| Data completeness | Input, output, logs, context-length estimate, injected experience count, and failed-run reason are preserved. |
+| Deviation handling | Any retry, exclusion, timeout, manual repair, or platform incident is recorded before scoring. |
+| Reviewer independence | Reviewers use the frozen Rubric and do not inspect group identity before submitting scores. |
+
+Execution quality verdict:
+
+1. `VALID`: all dimensions pass, or deviations are minor and documented before scoring.
+2. `VALID_WITH_LIMITATIONS`: one or more non-critical deviations exist; result can be used but must be caveated in the report.
+3. `INVALID`: group isolation, anonymization, failed-run accounting, or scoring independence is broken; run must not support effectiveness claims.
+
 主实验任务：
 
 1. 数据列表页：包含搜索和筛选，但需求不显式提醒 loading、empty、分页或竞态。
@@ -424,6 +447,7 @@ Human Control Gate:
 1. MVP 至少 18 次有效或有记账的运行。
 2. 每次运行有完整输入、输出和运行元数据。
 3. failed-run 有失败原因和重试记录。
+4. 每次运行都有 execution quality verdict；`INVALID` runs 不进入主效果比较，只进入失败与偏差分析。
 
 ### P5. 评分、分析与报告
 
@@ -451,6 +475,7 @@ Human Control Gate:
 1. kappa `>= 0.65`，或记录复评过程。
 2. 报告包含均值、中位数、标准差和效应量讨论。
 3. 报告明确说明哪些结论是强结论，哪些只是方向性观察。
+4. 报告必须单独列出 execution quality summary，包括 `VALID`、`VALID_WITH_LIMITATIONS`、`INVALID` 的数量和原因。
 
 ## 6. Acceptance Criteria
 
