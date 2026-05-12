@@ -10,6 +10,10 @@
 
 Re-ran `npm run build` in each `*/output/` from WSL; all nine exit 0 after repair.
 
+## CI note (shell wait)
+
+A one-off poll script exited **1** after ~10.5 min when only **8/9** `full-rubric-review.json` files were present; the last file appeared shortly afterward. All nine reviews are on disk; see `experiments/task-async-form-full-rubric-summary.md` and `scores-full-rubric-task-async-form-wide.csv`.
+
 ## run-log.csv
 
 Operator should append nine rows with model/temperature/timestamps per `experiment-protocol.md` §8. Placeholder `run_id` values are in each `metadata.json`.

@@ -17,6 +17,10 @@ Agents may add templates and scripts; batch execution, retries, anonymization, s
 | `runs/` | Raw outputs per `planned_run_dir` in the randomization CSV. |
 | `anonymous-submissions/` | Blind copies for scoring. |
 | `templates/` | `run-metadata.template.json`, `AUTO_CHECKS.md`. |
+| `full-rubric-review-instructions.md` | Full 100-pt rubric scoring for LLM batch (`rubric.md` §1–§5). |
+| `scores-full-rubric-task-async-form-wide.csv` | Summarized category + total scores for `task-async-form` LLM review. |
+| `task-async-form-full-rubric-summary.md` | Human-readable aggregate for that batch. |
+| `code-quality-review-instructions.md` | Legacy **code-only** slice (35 pts); prefer full-rubric doc for new runs. |
 
 ## Scripts (repo root)
 

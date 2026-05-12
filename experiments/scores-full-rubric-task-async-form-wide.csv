@@ -1,0 +1,10 @@
+task_id,group,replicate,reviewer_id,category_functional_0_20,category_productization_0_45,category_code_quality_0_35,total_score_0_100
+task-async-form,baseline,rep-01,llm-reviewer,20.0,33.0,25.67,78.67
+task-async-form,baseline,rep-02,llm-reviewer,20.0,27.0,23.33,70.33
+task-async-form,baseline,rep-03,llm-reviewer,20.0,27.0,28.0,75.0
+task-async-form,experience-skill,rep-01,llm-reviewer,20.0,45.0,30.33,95.33
+task-async-form,experience-skill,rep-02,llm-reviewer,20.0,42.0,23.33,85.33
+task-async-form,experience-skill,rep-03,llm-reviewer,20.0,42.0,28.0,90.0
+task-async-form,full-prompt,rep-01,llm-reviewer,17.78,42.0,30.33,90.11
+task-async-form,full-prompt,rep-02,llm-reviewer,20.0,36.0,21.0,77.0
+task-async-form,full-prompt,rep-03,llm-reviewer,20.0,39.0,30.33,89.33

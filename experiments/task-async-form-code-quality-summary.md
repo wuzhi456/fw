@@ -1,5 +1,7 @@
 # task-async-form — code quality only (single reviewer = subagent)
 
+**Updated:** full 100-point batch is in `experiments/task-async-form-full-rubric-summary.md` (see `full-rubric-review.json` per run).
+
 **Rubric:** `rubric.md` §5 (five metrics × 0–3). **Category points:** \((\mathrm{mean\ of\ five}) / 3) \times 35\) → max **35** for code quality alone.
 
 **Review procedure:** Nine parallel `Task` subagents; each wrote `code-quality-review.json` beside `output/`. Instructions: `experiments/code-quality-review-instructions.md`.

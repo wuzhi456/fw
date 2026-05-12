@@ -184,3 +184,5 @@ Any deviation from this protocol must be recorded before analysis.
 | --- | --- | --- | --- | --- |
 | 2026-05-12 | Initial protocol frozen. | P0 setup. | None. | Project owner / agent record |
 | 2026-05-12 | P4 single-task batch `task-async-form`: nine parallel agent runs; `full-prompt/rep-02` missing `src/index.css` repaired before scoring; `experience-skill/rep-03` metadata relocated from `output/` to `rep-03/`. | Automated batch + agent omission. | Minor artifact hygiene; logged in `experiments/runs/task-async-form/BATCH_SUMMARY.md` and run notes. | Operator review |
+| 2026-05-12 | `rubric.md` amended: §2.1 explicit N/A averaging, §2.2 metric ids, §9 supplementary LLM reviewer rules. | Enable reproducible subagent scoring without replacing §6 formal review. | P5 claims must label LLM-assisted scores vs human blind. | Operator review |
+| 2026-05-12 | Nine `llm-reviewer` full-rubric passes for `task-async-form` (`full-rubric-review.json` + `scores-full-rubric-task-async-form-wide.csv`). | User-requested complete functional/productization/code scoring. | Exploratory; not dual-reviewer kappa. | Operator review |

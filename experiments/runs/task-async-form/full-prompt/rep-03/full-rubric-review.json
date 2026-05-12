@@ -1,0 +1,41 @@
+{
+  "reviewer_id": "llm-reviewer",
+  "rubric_ref": "rubric.md",
+  "run_path": "experiments/runs/task-async-form/full-prompt/rep-03",
+  "functional": {
+    "requirement_completion": 3,
+    "primary_path_operability": 3,
+    "interaction_completeness": 3
+  },
+  "productization": {
+    "async_state_handling": 3,
+    "list_data_performance": null,
+    "list_data_performance_na_reason": "The artifact is a single-page form with no list, pagination, virtualization, or large-dataset rendering scope.",
+    "form_robustness": 3,
+    "state_consistency": 3,
+    "error_empty_ux": 2,
+    "responsive_layout": 2
+  },
+  "code_quality": {
+    "component_boundaries": 3,
+    "request_state_modeling": 3,
+    "reuse_consistency": 3,
+    "test_coverage": 1,
+    "maintainability": 3
+  },
+  "category_functional_points": 20.00,
+  "category_productization_points": 39.00,
+  "category_code_quality_points": 30.33,
+  "total_score_0_100": 89.33,
+  "summary_comment": "The output delivers a runnable Vite/React form with two server-validated fields, AbortController-based stale-response guarding, debounced blur validation, field-level retry, and a submit path that surfaces simulated server and network failures before a clear success state. Productization is strong on async and form behavior; list-style performance is correctly out of scope. Error and empty guidance is mostly message-driven rather than richer empty patterns, and layout is solid for a narrow card but not deeply stress-tested for dense content. Code is clear and well-factored, but there are no automated tests despite testable async and submit flows.",
+  "files_reviewed": [
+    "README.md",
+    "package.json",
+    "index.html",
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/mockApi.ts",
+    "src/App.css",
+    "src/index.css"
+  ]
+}

@@ -1,4 +1,8 @@
-# Code quality review (single reviewer, task-async-form batch)
+# Code quality review (legacy: code-only slice)
+
+For **functional + productization + code** (100 points), use `experiments/full-rubric-review-instructions.md` and write `full-rubric-review.json`.
+
+---
 
 Use **only** `rubric.md` §5 (Code Quality Metrics). Each metric is **0–3** per rubric §1.
 

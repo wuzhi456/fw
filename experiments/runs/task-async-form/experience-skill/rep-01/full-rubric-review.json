@@ -1,0 +1,48 @@
+{
+  "reviewer_id": "llm-reviewer",
+  "rubric_ref": "rubric.md",
+  "run_path": "experiments/runs/task-async-form/experience-skill/rep-01",
+  "functional": {
+    "requirement_completion": 3,
+    "primary_path_operability": 3,
+    "interaction_completeness": 3
+  },
+  "productization": {
+    "async_state_handling": 3,
+    "list_data_performance": null,
+    "list_data_performance_na_reason": "The artifact is a single form with no list, pagination, virtualization, or large-dataset rendering scope.",
+    "form_robustness": 3,
+    "state_consistency": 3,
+    "error_empty_ux": 3,
+    "responsive_layout": 3
+  },
+  "code_quality": {
+    "component_boundaries": 3,
+    "request_state_modeling": 3,
+    "reuse_consistency": 3,
+    "test_coverage": 1,
+    "maintainability": 3
+  },
+  "category_functional_points": 20.0,
+  "category_productization_points": 45.0,
+  "category_code_quality_points": 30.33,
+  "total_score_0_100": 95.33,
+  "summary_comment": "The deliverable matches the frozen task: server-side async validation gates submit, users see field-level and summary feedback, and retries plus idempotency support recovery through transient failures. Remote validation correctly aborts stale in-flight work, and layout and accessibility hints are solid for a compact form. The main gap versus a top-tier score is the absence of automated tests for race, retry, and validation edge paths despite otherwise testable modules.",
+  "files_reviewed": [
+    "README.md",
+    "package.json",
+    "index.html",
+    "vite.config.ts",
+    "tsconfig.json",
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/AsyncForm.tsx",
+    "src/types.ts",
+    "src/apiClient.ts",
+    "src/mockRemoteApi.ts",
+    "src/useDebouncedValue.ts",
+    "src/useKeyedRemoteValidator.ts",
+    "src/styles.css",
+    "src/vite-env.d.ts"
+  ]
+}
