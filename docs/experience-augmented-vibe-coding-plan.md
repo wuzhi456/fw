@@ -212,6 +212,13 @@ score =
 
 ### 4.5 Experiment Protocol
 
+Human Control Gate:
+
+1. P4 and P5 are human-controlled phases. The human operator decides when to start each run, whether a failed run is retried, whether a run is excluded, when outputs are anonymized, and when scoring begins.
+2. Agents may prepare task prompts, protocol files, logging templates, scoring sheets, anonymization scripts, and analysis drafts, but must not independently execute the full experiment batch.
+3. Agents must not change group assignment, sampling rules, retry rules, failed-run status, scoring anchors, or conclusion wording without explicit human instruction.
+4. Final claims about Skill effectiveness must be reviewed and approved by the human operator after seeing the score table, context-length records, failed-run log, and threat-validity notes.
+
 主实验任务：
 
 1. 数据列表页：包含搜索和筛选，但需求不显式提醒 loading、empty、分页或竞态。
@@ -395,6 +402,8 @@ score =
 
 目标：在固定协议下比较 Baseline、Experience Skill 和 Full Prompt 的生成质量。
 
+控制权：P4 由人工主控。Agent 负责准备输入、记录模板、匿名化辅助和自动检查脚本；是否启动某次运行、是否重试、是否接受 failed-run 记账，以及是否进入下一组实验，均由人工确认。
+
 任务：
 
 1. 为每个实验任务准备完全一致的基础需求文本。
@@ -419,6 +428,8 @@ score =
 ### P5. 评分、分析与报告
 
 目标：用冻结 Rubric 评估结果，并形成可信的实验分析。
+
+控制权：P5 由人工主控。Agent 可以汇总评分、计算统计量、整理分歧项和起草报告，但不得自行解除盲评、修改评分、仲裁分歧、剔除异常结果或下最终结论。
 
 任务：
 
