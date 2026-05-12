@@ -1,4 +1,9 @@
 ---
+
+
+
+
+
 id: ux-error-boundary-granularity
 title: "错误边界粒度应平衡隔离与信息密度"
 category: frontend-productization
@@ -28,7 +33,7 @@ verification:
 evidence:
   - "../../evidence/kibana/kibana-error-boundary-001.md"
   - "../../evidence/kibana/kibana-error-boundary-002.md"
-confidence: medium
+confidence: low
 ---
 
 ## 经验解释

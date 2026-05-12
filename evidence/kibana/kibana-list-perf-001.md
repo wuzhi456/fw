@@ -4,14 +4,17 @@ repo_url: https://github.com/elastic/kibana
 immutable_ref: fb1270aacdc6b660c792319e5221a0fa9f2804c0
 artifact_type: pull_request
 path_or_issue_pr: "#106163"
-excerpt_or_summary: PR：为 Lens 空结果状态补充与有数据时一致的 render-complete / shared-item 标记，并附带单测更新。
-mapped_experience_claim: 字段列表与可视化在无数据时仍需可被调度与测试感知「已完成渲染」，否则大仪表盘场景易出现性能/稳定性假阴性。
-retrieval_time: 2026-05-12T12:00:00Z
+artifact_url: "https://github.com/elastic/kibana/pull/106163"
+artifact_title: "[Lens] Add render complete tags to empty states"
+verification_status: verified
+claim_support: partial
+excerpt_or_summary: "为空结果 Lens 面板补齐与有数据时一致的完成标记，便于调度与测试感知。"
+mapped_experience_claim: "无数据时仍需可被调度感知「已完成渲染」，避免大仪表盘假阴性。"
+retrieval_time: 2026-05-12T20:00:00Z
 confidence: medium
 ---
-
 ## Note
 
-Curated P1 evidence batch: path and claim distilled from public docs, tests, or issue titles without pasting copyrighted source. SHA pins repository HEAD at retrieval time for reproducibility; line-level drift is possible—re-validate before publication.
+本记录在 `scripts/apply_evidence_audit.py` 中由 **evidence-audit** 批次生成：已用浏览器/GitHub 页面核验可打开性，剔除 bot-only flaky 条目并替换 404 路径。文档类证据的 `immutable_ref` 已钉选具体 commit SHA（与 `docs/evidence-audit-result.json` 同源）。
 
-Verifier（2026-05-12）：已将 `path_or_issue_pr` 从占位号替换为可追溯的 GitHub Issue/PR，并改写摘要与 claim 以贴合工单主题；索引见 `docs/verification-spotcheck-2026-05-12.md` §4。
+**核验状态取值**：`verified`（Issue/PR 可打开且作者非 release bot）、`verified_path`（blob/tree 可打开）、`replaced`（已换证）、`downgraded`（支撑弱已降置信）。

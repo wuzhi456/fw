@@ -1,4 +1,9 @@
 ---
+
+
+
+
+
 id: form-duplicate-submit-guard
 title: "表单提交必须防重复点击与重复 mutation"
 category: frontend-productization
@@ -29,7 +34,7 @@ verification:
 evidence:
   - "../../evidence/react-admin/form-dup-guard-001.md"
   - "../../evidence/react-admin/form-dup-guard-002.md"
-confidence: high
+confidence: medium
 ---
 
 ## 经验解释

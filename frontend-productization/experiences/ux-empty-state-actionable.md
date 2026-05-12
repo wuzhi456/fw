@@ -1,4 +1,9 @@
 ---
+
+
+
+
+
 id: ux-empty-state-actionable
 title: "空数据状态应解释原因并给出下一步"
 category: frontend-productization
@@ -28,7 +33,7 @@ verification:
 evidence:
   - "../../evidence/kibana/kibana-empty-001.md"
   - "../../evidence/kibana/kibana-empty-002.md"
-confidence: medium
+confidence: high
 ---
 
 ## 经验解释

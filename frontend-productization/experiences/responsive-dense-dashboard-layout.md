@@ -1,4 +1,9 @@
 ---
+
+
+
+
+
 id: responsive-dense-dashboard-layout
 title: "数据密集仪表需自适应网格与最小宽度策略"
 category: frontend-productization

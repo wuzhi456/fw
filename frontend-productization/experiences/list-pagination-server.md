@@ -1,4 +1,9 @@
 ---
+
+
+
+
+
 id: list-pagination-server
 title: "大数据列表应默认走服务端分页与稳定排序"
 category: frontend-productization
@@ -29,7 +34,7 @@ verification:
 evidence:
   - "../../evidence/react-admin/list-pagination-001.md"
   - "../../evidence/react-admin/list-pagination-002.md"
-confidence: high
+confidence: medium
 ---
 
 ## 经验解释

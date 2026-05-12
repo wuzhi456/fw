@@ -1,4 +1,9 @@
 ---
+
+
+
+
+
 id: async-explicit-states
 title: "异步请求必须显式建模用户可感知状态"
 category: frontend-productization
@@ -32,7 +37,7 @@ verification:
 evidence:
   - "../../evidence/react-admin/async-explicit-states-001.md"
   - "../../evidence/react-admin/async-explicit-states-002.md"
-confidence: high
+confidence: medium
 ---
 
 ## 经验解释

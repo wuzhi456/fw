@@ -1,4 +1,9 @@
 ---
+
+
+
+
+
 id: async-stale-cancel
 title: "并发与导航场景下应取消或忽略过期请求"
 category: frontend-productization
@@ -30,7 +35,7 @@ verification:
 evidence:
   - "../../evidence/react-admin/async-stale-cancel-001.md"
   - "../../evidence/kibana/kibana-state-002.md"
-confidence: high
+confidence: medium
 ---
 
 ## 经验解释

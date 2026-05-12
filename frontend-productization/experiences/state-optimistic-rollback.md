@@ -1,4 +1,9 @@
 ---
+
+
+
+
+
 id: state-optimistic-rollback
 title: "乐观更新必须可回滚且与权限一致"
 category: frontend-productization
@@ -29,7 +34,7 @@ verification:
 evidence:
   - "../../evidence/refine/mutation-invalidation-001.md"
   - "../../evidence/refine/mutation-invalidation-002.md"
-confidence: high
+confidence: medium
 ---
 
 ## 经验解释

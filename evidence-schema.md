@@ -1,7 +1,7 @@
 # Evidence And Experience Unit Schemas
 
-Status: frozen for P0  
-Last updated: 2026-05-12
+Status: frozen for P0; evidence audit fields added 2026-05-12  
+Last updated: 2026-05-12 (evidence-audit)
 
 ## 1. Purpose
 
@@ -20,10 +20,15 @@ repo_url: https://github.com/marmelab/react-admin
 immutable_ref: commit-or-tag-or-release
 artifact_type: code | issue | pull_request | docs | test | commit
 path_or_issue_pr: packages/... or #12345
+artifact_url: https://github.com/.../blob/<sha>/path or issue/PR URL
+artifact_title: Human-readable title of the artifact (issue title, doc heading, or file purpose).
+verification_status: verified | verified_path | replaced | downgraded
+claim_support: weak | partial | strong
 excerpt_or_summary: Short evidence summary, maximum 120 Chinese characters or 80 English words.
 mapped_experience_claim: The transferable claim supported by this evidence.
 retrieval_time: 2026-05-12T00:00:00Z
 confidence: low | medium | high
+verification_notes: Optional audit trail (replacements, bot noise removed, 404 swaps).
 ---
 
 ## Note
@@ -40,20 +45,25 @@ Explain how this artifact supports the mapped claim. Do not paste long copyright
 | `immutable_ref` | yes | Prefer commit SHA, release tag, or versioned docs URL. If unavailable, write `unavailable` and explain why in the note. |
 | `artifact_type` | yes | Must be one of `code`, `issue`, `pull_request`, `docs`, `test`, or `commit`. |
 | `path_or_issue_pr` | yes | File path, issue number, PR/MR number, docs path, or commit SHA. |
+| `artifact_url` | yes | Canonical URL that opens the same artifact as `immutable_ref` + `path_or_issue_pr` (blob, tree, issue, or pull request). |
+| `artifact_title` | yes | Short title for humans and indexes (issue/PR title, doc name, or file label). |
+| `verification_status` | yes | `verified` (issue/PR reachable, not release-bot-only noise), `verified_path` (blob/tree at ref opens), `replaced` (artifact swapped during audit), or `downgraded` (weak link; confidence reduced). |
+| `claim_support` | yes | `weak`, `partial`, or `strong`: how directly the artifact encodes the `mapped_experience_claim`. |
 | `excerpt_or_summary` | yes | Short summary only; no long copied passages. |
 | `mapped_experience_claim` | yes | One precise claim the evidence supports. |
 | `retrieval_time` | yes | ISO 8601 UTC timestamp. |
 | `confidence` | yes | `low`, `medium`, or `high`. |
+| `verification_notes` | no | Audit-only notes: e.g. replaced flaky bot issue, fixed 404 path, or scope caveat. |
 
 ## 4. Confidence Rules
 
 | Confidence | Meaning |
 | --- | --- |
-| high | Source directly encodes the behavior, bug, test, or documented practice. |
-| medium | Source strongly implies the practice, but requires some interpretation. |
-| low | Source is relevant background only and cannot support a claim by itself. |
+| high | Source directly encodes the behavior, bug, test, or documented practice; `claim_support` should be `strong`, and `verification_status` should be `verified` or `verified_path`. |
+| medium | Source strongly implies the practice, but requires some interpretation, or only partially matches the claim (`claim_support` often `partial`). |
+| low | Source is relevant background only, weakly related, or cannot support the claim by itself (`claim_support` often `weak`). |
 
-Low-confidence evidence cannot be the only evidence for an Experience Unit.
+Low-confidence evidence cannot be the only evidence for an Experience Unit. After audit, an Experience Unit’s `confidence` must not exceed the **minimum** of its linked evidence rows’ `confidence` (weakest link).
 
 ## 5. Traceability Rules
 
@@ -94,7 +104,7 @@ evidence:
 
 Before an evidence record is accepted:
 
-1. The URL or repo path resolves.
+1. `artifact_url` resolves and matches the pinned `immutable_ref` where applicable; `path_or_issue_pr` is not a placeholder.
 2. The immutable ref is present or the missing-ref reason is explicit.
 3. The summary is short and does not copy a large passage.
 4. The mapped claim is narrow and productization-relevant.
@@ -109,7 +119,11 @@ source_project: react-admin
 repo_url: https://github.com/marmelab/react-admin
 immutable_ref: fe80bf37758da3b1d0c35a456416a1c169399d99
 artifact_type: docs
-path_or_issue_pr: docs or package docs path to be fixed during P1
+path_or_issue_pr: docs/DataFetchingGuide.md
+artifact_url: https://github.com/marmelab/react-admin/blob/fe80bf37758da3b1d0c35a456416a1c169399d99/docs/DataFetchingGuide.md
+artifact_title: Data fetching guide (react-admin docs)
+verification_status: verified_path
+claim_support: partial
 excerpt_or_summary: Documentation shows admin data flows should expose request status instead of assuming success.
 mapped_experience_claim: Admin UIs should model async request state explicitly so loading, empty, and error paths are reviewable.
 retrieval_time: 2026-05-12T03:30:00Z
@@ -118,7 +132,7 @@ confidence: medium
 
 ## Note
 
-Replace the provisional docs path with the exact immutable artifact during P1 evidence collection.
+Summarize claim support; do not paste long copyrighted passages.
 ```
 
 ## 10. Experience Unit Record Format
@@ -210,4 +224,4 @@ Before an Experience Unit is accepted:
 3. It includes all four injection stages: Plan, Coding, Review, and Test.
 4. It has at least one observable verification item.
 5. Its claim maps to one of the six frozen frontend productization risk classes.
-6. Its confidence does not exceed the confidence supported by its evidence.
+6. Its `confidence` does not exceed the **minimum** confidence among its linked evidence records (weakest-link rule).

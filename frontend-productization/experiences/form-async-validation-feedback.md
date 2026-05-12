@@ -1,4 +1,9 @@
 ---
+
+
+
+
+
 id: form-async-validation-feedback
 title: "异步校验需要防抖、字段级状态与可达错误"
 category: frontend-productization
@@ -29,7 +34,7 @@ verification:
 evidence:
   - "../../evidence/refine/form-async-validation-001.md"
   - "../../evidence/refine/form-async-validation-002.md"
-confidence: medium
+confidence: high
 ---
 
 ## 经验解释

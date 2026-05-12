@@ -1,4 +1,9 @@
 ---
+
+
+
+
+
 id: state-cache-invalidation
 title: "变更后缓存失效范围应精确且可预测"
 category: frontend-productization
@@ -29,7 +34,7 @@ verification:
 evidence:
   - "../../evidence/refine/mutation-invalidation-001.md"
   - "../../evidence/kibana/kibana-state-001.md"
-confidence: medium
+confidence: high
 ---
 
 ## 经验解释

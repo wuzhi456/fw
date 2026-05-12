@@ -1,0 +1,772 @@
+#!/usr/bin/env python3
+"""Rewrite evidence/*.md, EU confidences, summaries, and docs/evidence-audit-result.json from ROWS."""
+from __future__ import annotations
+
+import json
+import re
+from datetime import datetime, timezone
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+EV = ROOT / "evidence"
+EXP = ROOT / "frontend-productization" / "experiences"
+
+# Pin for refine docs that previously tracked `main` (paths verified HTTP 200 at this SHA).
+REFINE_DOCS_PIN = "d9889ee24c719d34b8feaca5da2b42e8608a636d"
+# Pin for kibana CONTRIBUTING.md (same generation as other kibana evidence in this batch).
+KIBANA_CONTRIBUTING_PIN = "fb1270aacdc6b660c792319e5221a0fa9f2804c0"
+
+# Each entry: relpath under evidence/, then front-matter fields (values are YAML-ready strings)
+# confidence = audited strength for THIS row (not raw heuristic)
+ROWS: list[dict[str, str]] = [
+    # react-admin
+    {
+        "file": "react-admin/async-explicit-states-001.md",
+        "source_project": "react-admin",
+        "repo_url": "https://github.com/marmelab/react-admin",
+        "immutable_ref": "fe80bf37758da3b1d0c35a456416a1c169399d99",
+        "artifact_type": "docs",
+        "path_or_issue_pr": "docs/DataFetchingGuide.md",
+        "artifact_url": "https://github.com/marmelab/react-admin/blob/fe80bf37758da3b1d0c35a456416a1c169399d99/docs/DataFetchingGuide.md",
+        "artifact_title": "Data fetching guide (react-admin docs)",
+        "verification_status": "verified_path",
+        "claim_support": "partial",
+        "excerpt_or_summary": "官方文档描述列表/详情等场景下如何获取远程数据，并引导处理异步结果。",
+        "mapped_experience_claim": "数据驱动后台界面应显式呈现 loading、empty、error 等用户可感知状态，而非仅假设成功路径。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": "GitHub contents 在 pin SHA 上可打开；正文未在本仓库逐字核对。",
+    },
+    {
+        "file": "react-admin/async-explicit-states-002.md",
+        "source_project": "react-admin",
+        "repo_url": "https://github.com/marmelab/react-admin",
+        "immutable_ref": "fe80bf37758da3b1d0c35a456416a1c169399d99",
+        "artifact_type": "code",
+        "path_or_issue_pr": "packages/ra-core/src/dataProvider/useDataProvider.ts",
+        "artifact_url": "https://github.com/marmelab/react-admin/blob/fe80bf37758da3b1d0c35a456416a1c169399d99/packages/ra-core/src/dataProvider/useDataProvider.ts",
+        "artifact_title": "useDataProvider hook (ra-core)",
+        "verification_status": "verified_path",
+        "claim_support": "strong",
+        "excerpt_or_summary": "集中式 dataProvider hook 为各 Resource 组件提供统一异步入口，便于分支处理成功/失败。",
+        "mapped_experience_claim": "将异步调用集中到 dataProvider / hook 层，使界面层能对一致的错误与结果形态分支处理。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "high",
+        "verification_notes": "路径已从错误旧路径更正；与 claim 直接对齐。",
+    },
+    {
+        "file": "react-admin/async-retry-001.md",
+        "source_project": "react-admin",
+        "repo_url": "https://github.com/marmelab/react-admin",
+        "immutable_ref": "fe80bf37758da3b1d0c35a456416a1c169399d99",
+        "artifact_type": "issue",
+        "path_or_issue_pr": "#10180",
+        "artifact_url": "https://github.com/marmelab/react-admin/issues/10180",
+        "artifact_title": "useNotify not being called by dataprovider or from within React Query instance",
+        "verification_status": "verified",
+        "claim_support": "strong",
+        "excerpt_or_summary": "自定义 dataProvider 抛出 HttpError 时，全局 notify 与 React Query 回调链路未按文档预期触发。",
+        "mapped_experience_claim": "异步写操作与查询错误必须能稳定映射为可感知的通知或可恢复路径，而非仅依赖各组件手写 onError。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": "Issue 以支持类结案；仍直接支撑「错误可见性/恢复」claim。",
+    },
+    {
+        "file": "react-admin/async-retry-002.md",
+        "source_project": "react-admin",
+        "repo_url": "https://github.com/marmelab/react-admin",
+        "immutable_ref": "fe80bf37758da3b1d0c35a456416a1c169399d99",
+        "artifact_type": "docs",
+        "path_or_issue_pr": "docs/Admin.md",
+        "artifact_url": "https://github.com/marmelab/react-admin/blob/fe80bf37758da3b1d0c35a456416a1c169399d99/docs/Admin.md",
+        "artifact_title": "Admin component documentation",
+        "verification_status": "verified_path",
+        "claim_support": "partial",
+        "excerpt_or_summary": "Admin 文档描述通知、布局与资源级错误反馈的常规模式。",
+        "mapped_experience_claim": "将技术错误与可读文案及可选重试动作配对呈现。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": "文档级支撑，弱于具体 Issue 对 retry 的针对性。",
+    },
+    {
+        "file": "react-admin/async-stale-cancel-001.md",
+        "source_project": "react-admin",
+        "repo_url": "https://github.com/marmelab/react-admin",
+        "immutable_ref": "fe80bf37758da3b1d0c35a456416a1c169399d99",
+        "artifact_type": "docs",
+        "path_or_issue_pr": "docs/Actions.md",
+        "artifact_url": "https://github.com/marmelab/react-admin/blob/fe80bf37758da3b1d0c35a456416a1c169399d99/docs/Actions.md",
+        "artifact_title": "Actions documentation",
+        "verification_status": "verified_path",
+        "claim_support": "partial",
+        "excerpt_or_summary": "文档描述变更后刷新列表、重取数据等常见 mutation 后续动作。",
+        "mapped_experience_claim": "变更后应刷新或失效视图，避免陈旧列表数据。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": "与竞态取消相关为间接支撑。",
+    },
+    {
+        "file": "react-admin/async-stale-cancel-002.md",
+        "source_project": "react-admin",
+        "repo_url": "https://github.com/marmelab/react-admin",
+        "immutable_ref": "fe80bf37758da3b1d0c35a456416a1c169399d99",
+        "artifact_type": "test",
+        "path_or_issue_pr": "packages/ra-core/src/controller/list/useListController.spec.tsx",
+        "artifact_url": "https://github.com/marmelab/react-admin/blob/fe80bf37758da3b1d0c35a456416a1c169399d99/packages/ra-core/src/controller/list/useListController.spec.tsx",
+        "artifact_title": "useListController unit tests",
+        "verification_status": "verified_path",
+        "claim_support": "partial",
+        "excerpt_or_summary": "列表控制器单测覆盖空结果等边界，提示测试应对非成功路径断言。",
+        "mapped_experience_claim": "自动化测试应覆盖空结果与错误分支，而非仅断言有数据列表。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": "路径自 useGetList.spec 更正；与竞态主题弱相关。",
+    },
+    {
+        "file": "react-admin/form-dup-guard-001.md",
+        "source_project": "react-admin",
+        "repo_url": "https://github.com/marmelab/react-admin",
+        "immutable_ref": "fe80bf37758da3b1d0c35a456416a1c169399d99",
+        "artifact_type": "docs",
+        "path_or_issue_pr": "docs/Forms.md",
+        "artifact_url": "https://github.com/marmelab/react-admin/blob/fe80bf37758da3b1d0c35a456416a1c169399d99/docs/Forms.md",
+        "artifact_title": "Forms documentation",
+        "verification_status": "verified_path",
+        "claim_support": "partial",
+        "excerpt_or_summary": "表单总览文档描述提交、校验与保存按钮等交互约定。",
+        "mapped_experience_claim": "在 mutation 飞行中阻止重复提交。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": "原 CreateEdit.md 404；替换为存在的 Forms.md。",
+    },
+    {
+        "file": "react-admin/form-dup-guard-002.md",
+        "source_project": "react-admin",
+        "repo_url": "https://github.com/marmelab/react-admin",
+        "immutable_ref": "fe80bf37758da3b1d0c35a456416a1c169399d99",
+        "artifact_type": "code",
+        "path_or_issue_pr": "packages/ra-ui-materialui/src/button/SaveButton.tsx",
+        "artifact_url": "https://github.com/marmelab/react-admin/blob/fe80bf37758da3b1d0c35a456416a1c169399d99/packages/ra-ui-materialui/src/button/SaveButton.tsx",
+        "artifact_title": "SaveButton.tsx",
+        "verification_status": "verified_path",
+        "claim_support": "strong",
+        "excerpt_or_summary": "SaveButton 从表单上下文读取 saving/pending 状态以禁用重复点击。",
+        "mapped_experience_claim": "提交按钮必须反映 pending mutation 状态。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "high",
+        "verification_notes": "代码与防重复提交 claim 强一致。",
+    },
+    {
+        "file": "react-admin/list-pagination-001.md",
+        "source_project": "react-admin",
+        "repo_url": "https://github.com/marmelab/react-admin",
+        "immutable_ref": "fe80bf37758da3b1d0c35a456416a1c169399d99",
+        "artifact_type": "docs",
+        "path_or_issue_pr": "docs/List.md",
+        "artifact_url": "https://github.com/marmelab/react-admin/blob/fe80bf37758da3b1d0c35a456416a1c169399d99/docs/List.md",
+        "artifact_title": "List component documentation",
+        "verification_status": "verified_path",
+        "claim_support": "strong",
+        "excerpt_or_summary": "List 文档描述分页 props 与 total 等服务器分页语义。",
+        "mapped_experience_claim": "大集合应使用服务端分页并暴露明确分页控件。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "high",
+        "verification_notes": None,
+    },
+    {
+        "file": "react-admin/list-pagination-002.md",
+        "source_project": "react-admin",
+        "repo_url": "https://github.com/marmelab/react-admin",
+        "immutable_ref": "fe80bf37758da3b1d0c35a456416a1c169399d99",
+        "artifact_type": "code",
+        "path_or_issue_pr": "packages/ra-ui-materialui/src/list/List.tsx",
+        "artifact_url": "https://github.com/marmelab/react-admin/blob/fe80bf37758da3b1d0c35a456416a1c169399d99/packages/ra-ui-materialui/src/list/List.tsx",
+        "artifact_title": "Material UI List.tsx",
+        "verification_status": "verified_path",
+        "claim_support": "partial",
+        "excerpt_or_summary": "List 组件组合分页工具条与资源上下文。",
+        "mapped_experience_claim": "在支持服务端分页时避免整表客户端渲染。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": None,
+    },
+    {
+        "file": "react-admin/list-window-001.md",
+        "source_project": "react-admin",
+        "repo_url": "https://github.com/marmelab/react-admin",
+        "immutable_ref": "fe80bf37758da3b1d0c35a456416a1c169399d99",
+        "artifact_type": "docs",
+        "path_or_issue_pr": "docs/Datagrid.md",
+        "artifact_url": "https://github.com/marmelab/react-admin/blob/fe80bf37758da3b1d0c35a456416a1c169399d99/docs/Datagrid.md",
+        "artifact_title": "Datagrid documentation",
+        "verification_status": "verified_path",
+        "claim_support": "partial",
+        "excerpt_or_summary": "Datagrid 文档讨论列、性能与大数据场景注意点。",
+        "mapped_experience_claim": "宽/高表应约束列并考虑虚拟化等模式。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": None,
+    },
+    {
+        "file": "react-admin/list-window-002.md",
+        "source_project": "react-admin",
+        "repo_url": "https://github.com/marmelab/react-admin",
+        "immutable_ref": "fe80bf37758da3b1d0c35a456416a1c169399d99",
+        "artifact_type": "issue",
+        "path_or_issue_pr": "#8075",
+        "artifact_url": "https://github.com/marmelab/react-admin/issues/8075",
+        "artifact_title": 'Datagrid is freezing the screen when receiving a "large" list',
+        "verification_status": "verified",
+        "claim_support": "strong",
+        "excerpt_or_summary": "用户报告数千行客户端 DataGrid 卡顿；维护者建议使用虚拟化表格。",
+        "mapped_experience_claim": "超大列表必须在架构上选择虚拟化或服务端分页，而非默认全量客户端渲染。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "high",
+        "verification_notes": "非 bot；与 claim 强一致。",
+    },
+    # refine
+    {
+        "file": "refine/mutation-invalidation-001.md",
+        "source_project": "refine",
+        "repo_url": "https://github.com/refinedev/refine",
+        "immutable_ref": REFINE_DOCS_PIN,
+        "artifact_type": "docs",
+        "path_or_issue_pr": "documentation/docs/data/hooks/use-invalidate/index.md",
+        "artifact_url": f"https://github.com/refinedev/refine/blob/{REFINE_DOCS_PIN}/documentation/docs/data/hooks/use-invalidate/index.md",
+        "artifact_title": "useInvalidate hook documentation",
+        "verification_status": "verified_path",
+        "claim_support": "strong",
+        "excerpt_or_summary": "官方文档说明 mutation 成功后按资源维度失效查询与可选 refetch 策略。",
+        "mapped_experience_claim": "变更后按实体/查询键失效相关查询，避免仪表板脏读。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "high",
+        "verification_notes": "旧 guides 路径 404；钉选 refine 文档 SHA 与同期 PR 证据一致。",
+    },
+    {
+        "file": "refine/mutation-invalidation-002.md",
+        "source_project": "refine",
+        "repo_url": "https://github.com/refinedev/refine",
+        "immutable_ref": REFINE_DOCS_PIN,
+        "artifact_type": "docs",
+        "path_or_issue_pr": "documentation/docs/data/hooks/use-form/index.md",
+        "artifact_url": f"https://github.com/refinedev/refine/blob/{REFINE_DOCS_PIN}/documentation/docs/data/hooks/use-form/index.md",
+        "artifact_title": "useForm (data hooks) documentation",
+        "verification_status": "verified_path",
+        "claim_support": "partial",
+        "excerpt_or_summary": "useForm 文档涵盖 mutationMode 等与服务器往返、错误处理相关内容。",
+        "mapped_experience_claim": "在字段旁呈现服务端校验错误并提供可恢复路径。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": "与「仅 invalidate」claim 有重叠；更偏表单/服务端错误呈现。",
+    },
+    {
+        "file": "refine/authz-empty-001.md",
+        "source_project": "refine",
+        "repo_url": "https://github.com/refinedev/refine",
+        "immutable_ref": REFINE_DOCS_PIN,
+        "artifact_type": "docs",
+        "path_or_issue_pr": "documentation/docs/authentication/auth-provider/index.md",
+        "artifact_url": f"https://github.com/refinedev/refine/blob/{REFINE_DOCS_PIN}/documentation/docs/authentication/auth-provider/index.md",
+        "artifact_title": "Auth provider documentation",
+        "verification_status": "verified_path",
+        "claim_support": "partial",
+        "excerpt_or_summary": "认证提供者文档描述未授权访问与路由保护行为。",
+        "mapped_experience_claim": "未授权视图应展示明确禁止访问 UI，而非空白壳。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": None,
+    },
+    {
+        "file": "refine/authz-empty-002.md",
+        "source_project": "refine",
+        "repo_url": "https://github.com/refinedev/refine",
+        "immutable_ref": REFINE_DOCS_PIN,
+        "artifact_type": "docs",
+        "path_or_issue_pr": "documentation/docs/ui-integrations/ant-design/introduction/index.md",
+        "artifact_url": f"https://github.com/refinedev/refine/blob/{REFINE_DOCS_PIN}/documentation/docs/ui-integrations/ant-design/introduction/index.md",
+        "artifact_title": "Ant Design UI integration introduction",
+        "verification_status": "verified_path",
+        "claim_support": "weak",
+        "excerpt_or_summary": "Ant Design 集成总览，链接至布局、反馈与 Result 等模式文档。",
+        "mapped_experience_claim": "复用一致的 Result/Alert 等模式呈现错误与空数据。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "low",
+        "verification_notes": "原 result.md 404；降级为集成总览，对 Result claim 为弱支撑。",
+    },
+    {
+        "file": "refine/dashboard-async-001.md",
+        "source_project": "refine",
+        "repo_url": "https://github.com/refinedev/refine",
+        "immutable_ref": REFINE_DOCS_PIN,
+        "artifact_type": "docs",
+        "path_or_issue_pr": "documentation/docs/data/hooks/use-list/index.md",
+        "artifact_url": f"https://github.com/refinedev/refine/blob/{REFINE_DOCS_PIN}/documentation/docs/data/hooks/use-list/index.md",
+        "artifact_title": "useList hook documentation",
+        "verification_status": "verified_path",
+        "claim_support": "strong",
+        "excerpt_or_summary": "useList 文档描述列表查询状态、错误与加载等钩子语义。",
+        "mapped_experience_claim": "仪表卡片应各自处理 loading/error，避免静默空白。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "high",
+        "verification_notes": None,
+    },
+    {
+        "file": "refine/dashboard-async-002.md",
+        "source_project": "refine",
+        "repo_url": "https://github.com/refinedev/refine",
+        "immutable_ref": REFINE_DOCS_PIN,
+        "artifact_type": "pull_request",
+        "path_or_issue_pr": "#4896",
+        "artifact_url": "https://github.com/refinedev/refine/pull/4896",
+        "artifact_title": "refactor(core): fine-tuning in invalidations",
+        "verification_status": "verified",
+        "claim_support": "strong",
+        "excerpt_or_summary": "PR 调整 mutation 后失效范围与 refetch 行为，并补充变更说明与测试计划。",
+        "mapped_experience_claim": "单测/变更应覆盖查询失效与活动查询 refetch 的交互，避免仪表板状态机盲点。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": "原单测路径在仓库重构后 404；改为已合并 PR 作为过程证据。",
+    },
+    {
+        "file": "refine/form-async-validation-001.md",
+        "source_project": "refine",
+        "repo_url": "https://github.com/refinedev/refine",
+        "immutable_ref": REFINE_DOCS_PIN,
+        "artifact_type": "issue",
+        "path_or_issue_pr": "#2955",
+        "artifact_url": "https://github.com/refinedev/refine/issues/2955",
+        "artifact_title": "[DOC] Material UI Server Side validation example.",
+        "verification_status": "verified",
+        "claim_support": "strong",
+        "excerpt_or_summary": "Issue 追踪 MUI 服务端校验官方示例缺口，直接指向字段级错误呈现需求。",
+        "mapped_experience_claim": "远程/服务端校验路径应在官方示例中明确字段级错误与提交流程。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "high",
+        "verification_notes": None,
+    },
+    {
+        "file": "refine/form-async-validation-002.md",
+        "source_project": "refine",
+        "repo_url": "https://github.com/refinedev/refine",
+        "immutable_ref": REFINE_DOCS_PIN,
+        "artifact_type": "docs",
+        "path_or_issue_pr": "documentation/docs/packages/react-hook-form/use-form/index.md",
+        "artifact_url": f"https://github.com/refinedev/refine/blob/{REFINE_DOCS_PIN}/documentation/docs/packages/react-hook-form/use-form/index.md",
+        "artifact_title": "@refinedev/react-hook-form useForm documentation",
+        "verification_status": "verified_path",
+        "claim_support": "strong",
+        "excerpt_or_summary": "React Hook Form 集成文档描述异步校验、字段级错误与提交流。",
+        "mapped_experience_claim": "为异步校验建模每字段 pending 与错误状态。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "high",
+        "verification_notes": "替换 404 的 packages/core useForm.ts 路径。",
+    },
+    {
+        "file": "refine/form-submit-recover-001.md",
+        "source_project": "refine",
+        "repo_url": "https://github.com/refinedev/refine",
+        "immutable_ref": REFINE_DOCS_PIN,
+        "artifact_type": "docs",
+        "path_or_issue_pr": "documentation/docs/data/hooks/use-update/index.md",
+        "artifact_url": f"https://github.com/refinedev/refine/blob/{REFINE_DOCS_PIN}/documentation/docs/data/hooks/use-update/index.md",
+        "artifact_title": "useUpdate hook documentation",
+        "verification_status": "verified_path",
+        "claim_support": "strong",
+        "excerpt_or_summary": "useUpdate 文档解释 pessimistic/optimistic/undoable 等 mutationMode 语义与缓存回滚。",
+        "mapped_experience_claim": "显式选择 mutation 模式以区分等待服务器与乐观更新回滚语义。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "high",
+        "verification_notes": "替换不存在的 mutationMode.md 单文件路径。",
+    },
+    {
+        "file": "refine/form-submit-recover-002.md",
+        "source_project": "refine",
+        "repo_url": "https://github.com/refinedev/refine",
+        "immutable_ref": REFINE_DOCS_PIN,
+        "artifact_type": "pull_request",
+        "path_or_issue_pr": "#3657",
+        "artifact_url": "https://github.com/refinedev/refine/pull/3657",
+        "artifact_title": "Fix optimistic updates of lists",
+        "verification_status": "verified",
+        "claim_support": "strong",
+        "excerpt_or_summary": "PR 修复乐观更新列表项合并错误，避免未变更字段在 mutation 中变 undefined。",
+        "mapped_experience_claim": "乐观更新失败或补丁合并错误时必须回滚或重新拉取权威实体。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "high",
+        "verification_notes": None,
+    },
+    {
+        "file": "refine/refine-responsive-001.md",
+        "source_project": "refine",
+        "repo_url": "https://github.com/refinedev/refine",
+        "immutable_ref": REFINE_DOCS_PIN,
+        "artifact_type": "issue",
+        "path_or_issue_pr": "#6323",
+        "artifact_url": "https://github.com/refinedev/refine/issues/6323",
+        "artifact_title": "[BUG] Menu Button and Heading Overlap in Mobile Preview.",
+        "verification_status": "verified",
+        "claim_support": "partial",
+        "excerpt_or_summary": "移动预览中菜单按钮与标题重叠的实际缺陷报告。",
+        "mapped_experience_claim": "管理端窄屏须验证侧栏/标题层叠与触控热区。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": None,
+    },
+    {
+        "file": "refine/refine-responsive-002.md",
+        "source_project": "refine",
+        "repo_url": "https://github.com/refinedev/refine",
+        "immutable_ref": REFINE_DOCS_PIN,
+        "artifact_type": "docs",
+        "path_or_issue_pr": "documentation/docs/routing/router-provider/index.md",
+        "artifact_url": f"https://github.com/refinedev/refine/blob/{REFINE_DOCS_PIN}/documentation/docs/routing/router-provider/index.md",
+        "artifact_title": "Router provider documentation",
+        "verification_status": "verified_path",
+        "claim_support": "partial",
+        "excerpt_or_summary": "路由与布局集成文档，说明响应式场景下导航与页面结构配合。",
+        "mapped_experience_claim": "小屏折叠导航并调整信息密度。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": "替换 404 的 packages/documentation/router.md。",
+    },
+    # kibana
+    {
+        "file": "kibana/kibana-async-001.md",
+        "source_project": "kibana",
+        "repo_url": "https://github.com/elastic/kibana",
+        "immutable_ref": "fb1270aacdc6b660c792319e5221a0fa9f2804c0",
+        "artifact_type": "issue",
+        "path_or_issue_pr": "#126594",
+        "artifact_url": "https://github.com/elastic/kibana/issues/126594",
+        "artifact_title": "[Discover] Empty state's description can be completely blank",
+        "verification_status": "verified",
+        "claim_support": "partial",
+        "excerpt_or_summary": "Discover 在无时间字段等组合下空状态描述缺失，讨论数据视图与空/错误反馈边界。",
+        "mapped_experience_claim": "重数据视图在部分失败或信息不全时仍须给出可理解的进度或空状态，而非空白。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": "替换 404 的 dev_docs data_views；与「重数据加载进度」为部分相关。",
+    },
+    {
+        "file": "kibana/kibana-async-002.md",
+        "source_project": "kibana",
+        "repo_url": "https://github.com/elastic/kibana",
+        "immutable_ref": "fb1270aacdc6b660c792319e5221a0fa9f2804c0",
+        "artifact_type": "issue",
+        "path_or_issue_pr": "#106085",
+        "artifact_url": "https://github.com/elastic/kibana/issues/106085",
+        "artifact_title": "Lens embeddable doesn't set proper attributes when no results found",
+        "verification_status": "verified",
+        "claim_support": "strong",
+        "excerpt_or_summary": "无结果 Lens 面板未上报 render-complete，导致 Dashboard 异步编排误判加载完成。",
+        "mapped_experience_claim": "异步面板在空/错/成功路径上应外显一致的渲染完成契约，避免竞态与假死加载。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "high",
+        "verification_notes": None,
+    },
+    {
+        "file": "kibana/kibana-empty-001.md",
+        "source_project": "kibana",
+        "repo_url": "https://github.com/elastic/kibana",
+        "immutable_ref": "fb1270aacdc6b660c792319e5221a0fa9f2804c0",
+        "artifact_type": "pull_request",
+        "path_or_issue_pr": "#128754",
+        "artifact_url": "https://github.com/elastic/kibana/pull/128754",
+        "artifact_title": "[Discover] Show a fallback empty message when no results are found",
+        "verification_status": "verified",
+        "claim_support": "strong",
+        "excerpt_or_summary": "为无结果 Discover 增加可操作建议（时间范围、索引、筛选等）的回退文案。",
+        "mapped_experience_claim": "空数据应解释原因并给出下一步（调整筛选/数据视图等）。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "high",
+        "verification_notes": "替换不存在的源码目录路径。",
+    },
+    {
+        "file": "kibana/kibana-empty-002.md",
+        "source_project": "kibana",
+        "repo_url": "https://github.com/elastic/kibana",
+        "immutable_ref": "fb1270aacdc6b660c792319e5221a0fa9f2804c0",
+        "artifact_type": "pull_request",
+        "path_or_issue_pr": "#79671",
+        "artifact_url": "https://github.com/elastic/kibana/pull/79671",
+        "artifact_title": "[Discover] Extend DiscoverNoResults component to show different message on error",
+        "verification_status": "verified",
+        "claim_support": "strong",
+        "excerpt_or_summary": "区分错误与无结果的 Discover 空状态，并改进单测策略（弱化全快照）。",
+        "mapped_experience_claim": "为主要用户旅程覆盖无结果与错误分支测试。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "high",
+        "verification_notes": None,
+    },
+    {
+        "file": "kibana/kibana-error-boundary-001.md",
+        "source_project": "kibana",
+        "repo_url": "https://github.com/elastic/kibana",
+        "immutable_ref": KIBANA_CONTRIBUTING_PIN,
+        "artifact_type": "docs",
+        "path_or_issue_pr": "CONTRIBUTING.md",
+        "artifact_url": f"https://github.com/elastic/kibana/blob/{KIBANA_CONTRIBUTING_PIN}/CONTRIBUTING.md",
+        "artifact_title": "Kibana CONTRIBUTING.md",
+        "verification_status": "verified_path",
+        "claim_support": "weak",
+        "excerpt_or_summary": "贡献指南强调插件边界、测试与质量门槛，间接要求失败可诊断。",
+        "mapped_experience_claim": "用错误边界与降级面板隔离插件失败。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "low",
+        "verification_notes": "原 dev_docs CONTRIBUTING 路径 404；钉选与其他 kibana 证据同代 commit 上仓库根 CONTRIBUTING，对 error boundary claim 仍为弱支撑。",
+    },
+    {
+        "file": "kibana/kibana-error-boundary-002.md",
+        "source_project": "kibana",
+        "repo_url": "https://github.com/elastic/kibana",
+        "immutable_ref": "fb1270aacdc6b660c792319e5221a0fa9f2804c0",
+        "artifact_type": "pull_request",
+        "path_or_issue_pr": "#153457",
+        "artifact_url": "https://github.com/elastic/kibana/pull/153457",
+        "artifact_title": "[Dashboard] Add better debugging to error embeddable checks",
+        "verification_status": "verified",
+        "claim_support": "strong",
+        "excerpt_or_summary": "增强 Dashboard 对 embeddableError 的断言以输出失败面板标题与错误信息。",
+        "mapped_experience_claim": "多面板系统应能定位具体失败嵌入件并保留其余区域可操作。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "high",
+        "verification_notes": None,
+    },
+    {
+        "file": "kibana/kibana-list-perf-001.md",
+        "source_project": "kibana",
+        "repo_url": "https://github.com/elastic/kibana",
+        "immutable_ref": "fb1270aacdc6b660c792319e5221a0fa9f2804c0",
+        "artifact_type": "pull_request",
+        "path_or_issue_pr": "#106163",
+        "artifact_url": "https://github.com/elastic/kibana/pull/106163",
+        "artifact_title": "[Lens] Add render complete tags to empty states",
+        "verification_status": "verified",
+        "claim_support": "partial",
+        "excerpt_or_summary": "为空结果 Lens 面板补齐与有数据时一致的完成标记，便于调度与测试感知。",
+        "mapped_experience_claim": "无数据时仍需可被调度感知「已完成渲染」，避免大仪表盘假阴性。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": None,
+    },
+    {
+        "file": "kibana/kibana-list-perf-002.md",
+        "source_project": "kibana",
+        "repo_url": "https://github.com/elastic/kibana",
+        "immutable_ref": "fb1270aacdc6b660c792319e5221a0fa9f2804c0",
+        "artifact_type": "pull_request",
+        "path_or_issue_pr": "#152311",
+        "artifact_url": "https://github.com/elastic/kibana/pull/152311",
+        "artifact_title": "[Discover] Inline data fetching errors",
+        "verification_status": "verified",
+        "claim_support": "partial",
+        "excerpt_or_summary": "Discover 将数据获取错误改为内联展示并覆盖移动端布局，减少 toast 风暴。",
+        "mapped_experience_claim": "多请求场景下应合并/抑制重复反馈并明确完成态，接近增量加载背压诉求。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": "替换不存在的 unified-field-list 路径；与「字段元数据窗口化」为部分相关。",
+    },
+    {
+        "file": "kibana/kibana-overflow-001.md",
+        "source_project": "kibana",
+        "repo_url": "https://github.com/elastic/kibana",
+        "immutable_ref": "fb1270aacdc6b660c792319e5221a0fa9f2804c0",
+        "artifact_type": "issue",
+        "path_or_issue_pr": "#36386",
+        "artifact_url": "https://github.com/elastic/kibana/issues/36386",
+        "artifact_title": "(Accessible) High Data Volume Bar Chart",
+        "verification_status": "verified",
+        "claim_support": "partial",
+        "excerpt_or_summary": "高数据量图表的无障碍与文本替代需求，约束信息密度与非纯视觉呈现。",
+        "mapped_experience_claim": "高密度可视化应规划非纯视觉信息承载，从需求侧约束长标签与溢出策略。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": None,
+    },
+    {
+        "file": "kibana/kibana-overflow-002.md",
+        "source_project": "kibana",
+        "repo_url": "https://github.com/elastic/kibana",
+        "immutable_ref": "fb1270aacdc6b660c792319e5221a0fa9f2804c0",
+        "artifact_type": "issue",
+        "path_or_issue_pr": "#221577",
+        "artifact_url": "https://github.com/elastic/kibana/issues/221577",
+        "artifact_title": "[Lens] add better accessibility descriptions to elastic-charts",
+        "verification_status": "verified",
+        "claim_support": "partial",
+        "excerpt_or_summary": "要求图表输出维度/字段/操作等可读描述，提高信息密度下的可消费性。",
+        "mapped_experience_claim": "信息密度高时需要机器可消费的文本模型，推动字段名与维度文本显式化与截断策略。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "medium",
+        "verification_notes": None,
+    },
+    {
+        "file": "kibana/kibana-state-001.md",
+        "source_project": "kibana",
+        "repo_url": "https://github.com/elastic/kibana",
+        "immutable_ref": "fb1270aacdc6b660c792319e5221a0fa9f2804c0",
+        "artifact_type": "issue",
+        "path_or_issue_pr": "#149488",
+        "artifact_url": "https://github.com/elastic/kibana/issues/149488",
+        "artifact_title": "[Discover] Inline toast error message in Discover main",
+        "verification_status": "verified",
+        "claim_support": "strong",
+        "excerpt_or_summary": "将多次数据获取错误从 toast 改为内联/弹层展示，明确多请求场景 UX。",
+        "mapped_experience_claim": "查询上下文变化或并行请求时，应以显式 UI 状态取代易错过的 toast，从用户角度等价于丢弃「过期」噪声反馈。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "high",
+        "verification_notes": "替换 404 的 building_plugins.md；与 stale-response 叙事一致。",
+    },
+    {
+        "file": "kibana/kibana-state-002.md",
+        "source_project": "kibana",
+        "repo_url": "https://github.com/elastic/kibana",
+        "immutable_ref": "fb1270aacdc6b660c792319e5221a0fa9f2804c0",
+        "artifact_type": "issue",
+        "path_or_issue_pr": "#129020",
+        "artifact_url": "https://github.com/elastic/kibana/issues/129020",
+        "artifact_title": '[Discover] Show "no matching indices found" error inside the callout',
+        "verification_status": "verified",
+        "claim_support": "strong",
+        "excerpt_or_summary": "将「无匹配索引」类错误从易忽略 toast 迁入 Discover 主 callout，与数据上下文绑定。",
+        "mapped_experience_claim": "筛选/数据视图上下文变化时，错误与空态必须与当前查询绑定，避免用户基于过期或无关提示决策。",
+        "retrieval_time": "2026-05-12T20:00:00Z",
+        "confidence": "high",
+        "verification_notes": "替换 kibanamachine 的 flaky CI Issue #97701。",
+    },
+]
+
+
+def render_fm(row: dict) -> str:
+    lines: list[str] = []
+    order = [
+        "source_project",
+        "repo_url",
+        "immutable_ref",
+        "artifact_type",
+        "path_or_issue_pr",
+        "artifact_url",
+        "artifact_title",
+        "verification_status",
+        "claim_support",
+        "excerpt_or_summary",
+        "mapped_experience_claim",
+        "retrieval_time",
+        "confidence",
+    ]
+    for k in order:
+        v = row.get(k)
+        if v is None:
+            continue
+        if k in ("path_or_issue_pr", "artifact_url", "artifact_title", "excerpt_or_summary", "mapped_experience_claim", "verification_notes"):
+            lines.append(f'{k}: {json.dumps(str(v), ensure_ascii=False)}')
+        else:
+            lines.append(f"{k}: {v}")
+    if row.get("verification_notes"):
+        lines.append(f'verification_notes: {json.dumps(str(row["verification_notes"]), ensure_ascii=False)}')
+    return "---\n" + "\n".join(lines) + "\n---"
+
+
+def note_block() -> str:
+    return """## Note
+
+本记录在 `scripts/apply_evidence_audit.py` 中由 **evidence-audit** 批次生成：已用浏览器/GitHub 页面核验可打开性，剔除 bot-only flaky 条目并替换 404 路径。文档类证据的 `immutable_ref` 已钉选具体 commit SHA（与 `docs/evidence-audit-result.json` 同源）。
+
+**核验状态取值**：`verified`（Issue/PR 可打开且作者非 release bot）、`verified_path`（blob/tree 可打开）、`replaced`（已换证）、`downgraded`（支撑弱已降置信）。
+"""
+
+
+def write_evidence_rows() -> dict[str, str]:
+    conf_by_file: dict[str, str] = {}
+    for row in ROWS:
+        p = EV / row["file"]
+        body = render_fm(row) + "\n" + note_block()
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(body, encoding="utf-8")
+        conf_by_file[row["file"]] = row["confidence"]
+    return conf_by_file
+
+
+def update_eu_confidence(conf_by_file: dict[str, str]) -> None:
+    rank = {"low": 0, "medium": 1, "high": 2}
+
+    def eu_confidence(ev_paths: list[str]) -> str:
+        keys = []
+        for rel in ev_paths:
+            rel = rel.strip('"').strip("'")
+            rel = re.sub(r"^\.\./\.\./evidence/", "", rel)
+            c = conf_by_file.get(rel, "medium")
+            keys.append(c)
+        m = keys[0]
+        for c in keys[1:]:
+            m = m if rank[m] <= rank[c] else c
+        return m
+
+    for eu in sorted(EXP.glob("*.md")):
+        text = eu.read_text(encoding="utf-8")
+        if not text.startswith("---"):
+            continue
+        parts = text.split("---", 2)
+        fm, body = parts[1], parts[2]
+        ev_paths: list[str] = []
+        for line in fm.splitlines():
+            s = line.strip()
+            if s.startswith("- ") and "evidence/" in s:
+                ev_paths.append(s[2:].strip().strip('"').strip("'"))
+        if len(ev_paths) < 2:
+            continue
+        new_c = eu_confidence(ev_paths)
+        new_fm_lines = []
+        replaced = False
+        for line in fm.splitlines():
+            if line.strip().startswith("confidence:"):
+                new_fm_lines.append(f"confidence: {new_c}")
+                replaced = True
+            else:
+                new_fm_lines.append(line)
+        if not replaced:
+            new_fm_lines.append(f"confidence: {new_c}")
+        new_text = "---\n" + "\n".join(new_fm_lines) + "\n---" + body
+        eu.write_text(new_text, encoding="utf-8")
+
+
+def write_evidence_audit_result() -> None:
+    """Single source of truth JSON for audits; overwrites stale API-only exports."""
+    now = datetime.now(timezone.utc).replace(microsecond=0)
+    generated = now.isoformat().replace("+00:00", "Z")
+    evidence: list[dict] = []
+    for row in ROWS:
+        rel = row["file"]
+        rec: dict = {"file": f"evidence/{rel}", "evidence_relative": rel}
+        for k, v in row.items():
+            if k == "file" or v is None:
+                continue
+            rec[k] = v
+        evidence.append(rec)
+    payload = {
+        "schema_version": 2,
+        "generated_by": "scripts/apply_evidence_audit.py",
+        "generated_at": generated,
+        "description": "Aligned with ROWS and rewritten evidence/*.md. Not GitHub API live probe.",
+        "evidence": evidence,
+    }
+    (ROOT / "docs" / "evidence-audit-result.json").write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+
+def main() -> None:
+    conf = write_evidence_rows()
+    update_eu_confidence(conf)
+    write_evidence_audit_result()
+    # summary for doc
+    (ROOT / "docs" / "evidence-audit-summary.json").write_text(
+        json.dumps({"evidence_files": len(ROWS), "confidence_map": conf}, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    print("OK", len(ROWS), "evidence files + EU confidence + docs/evidence-audit-result.json")
+
+
+if __name__ == "__main__":
+    main()

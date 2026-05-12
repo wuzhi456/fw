@@ -1,4 +1,9 @@
 ---
+
+
+
+
+
 id: ux-fallback-recoverable-errors
 title: "可恢复错误应通过非阻塞反馈呈现"
 category: frontend-productization
@@ -28,7 +33,7 @@ verification:
 evidence:
   - "../../evidence/refine/authz-empty-001.md"
   - "../../evidence/refine/authz-empty-002.md"
-confidence: medium
+confidence: low
 ---
 
 ## 经验解释

@@ -1,4 +1,9 @@
 ---
+
+
+
+
+
 id: responsive-long-text-overflow
 title: "长文本与标识符需要截断、换行或详情展开"
 category: frontend-productization

@@ -4,14 +4,17 @@ repo_url: https://github.com/refinedev/refine
 immutable_ref: d9889ee24c719d34b8feaca5da2b42e8608a636d
 artifact_type: issue
 path_or_issue_pr: "#6323"
-excerpt_or_summary: Issue：refine.dev 移动预览中菜单按钮与标题重叠；维护者建议通过 ThemedLayout swizzle 定制布局。
-mapped_experience_claim: 管理端窄屏必须验证侧栏/标题层叠与触控热区，避免关键操作被遮挡。
-retrieval_time: 2026-05-12T12:00:00Z
+artifact_url: "https://github.com/refinedev/refine/issues/6323"
+artifact_title: "[BUG] Menu Button and Heading Overlap in Mobile Preview."
+verification_status: verified
+claim_support: partial
+excerpt_or_summary: "移动预览中菜单按钮与标题重叠的实际缺陷报告。"
+mapped_experience_claim: "管理端窄屏须验证侧栏/标题层叠与触控热区。"
+retrieval_time: 2026-05-12T20:00:00Z
 confidence: medium
 ---
-
 ## Note
 
-Curated P1 evidence batch: path and claim distilled from public docs, tests, or issue titles without pasting copyrighted source. SHA pins repository HEAD at retrieval time for reproducibility; line-level drift is possible—re-validate before publication.
+本记录在 `scripts/apply_evidence_audit.py` 中由 **evidence-audit** 批次生成：已用浏览器/GitHub 页面核验可打开性，剔除 bot-only flaky 条目并替换 404 路径。文档类证据的 `immutable_ref` 已钉选具体 commit SHA（与 `docs/evidence-audit-result.json` 同源）。
 
-Verifier（2026-05-12）：已将 `path_or_issue_pr` 从占位号替换为可追溯的 GitHub Issue/PR，并改写摘要与 claim 以贴合工单主题；索引见 `docs/verification-spotcheck-2026-05-12.md` §4。
+**核验状态取值**：`verified`（Issue/PR 可打开且作者非 release bot）、`verified_path`（blob/tree 可打开）、`replaced`（已换证）、`downgraded`（支撑弱已降置信）。

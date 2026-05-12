@@ -21,7 +21,7 @@
         "review": 1,
         "test": 1
       },
-      "evidence_confidence": "high",
+      "evidence_confidence": "medium",
       "evidence_paths": [
         "../../evidence/react-admin/async-explicit-states-001.md",
         "../../evidence/react-admin/async-explicit-states-002.md"
@@ -46,7 +46,7 @@
         "review": 1,
         "test": 1
       },
-      "evidence_confidence": "high",
+      "evidence_confidence": "medium",
       "evidence_paths": [
         "../../evidence/react-admin/async-stale-cancel-001.md",
         "../../evidence/kibana/kibana-state-002.md"
@@ -94,7 +94,7 @@
         "review": 1,
         "test": 1
       },
-      "evidence_confidence": "high",
+      "evidence_confidence": "medium",
       "evidence_paths": [
         "../../evidence/react-admin/list-pagination-001.md",
         "../../evidence/react-admin/list-pagination-002.md"
@@ -166,7 +166,7 @@
         "review": 1,
         "test": 1
       },
-      "evidence_confidence": "high",
+      "evidence_confidence": "medium",
       "evidence_paths": [
         "../../evidence/react-admin/form-dup-guard-001.md",
         "../../evidence/react-admin/form-dup-guard-002.md"
@@ -190,7 +190,7 @@
         "review": 1,
         "test": 1
       },
-      "evidence_confidence": "medium",
+      "evidence_confidence": "high",
       "evidence_paths": [
         "../../evidence/refine/form-async-validation-001.md",
         "../../evidence/refine/form-async-validation-002.md"
@@ -238,7 +238,7 @@
         "review": 1,
         "test": 1
       },
-      "evidence_confidence": "high",
+      "evidence_confidence": "medium",
       "evidence_paths": [
         "../../evidence/refine/mutation-invalidation-001.md",
         "../../evidence/refine/mutation-invalidation-002.md"
@@ -262,7 +262,7 @@
         "review": 1,
         "test": 1
       },
-      "evidence_confidence": "medium",
+      "evidence_confidence": "high",
       "evidence_paths": [
         "../../evidence/refine/mutation-invalidation-001.md",
         "../../evidence/kibana/kibana-state-001.md"
@@ -309,7 +309,7 @@
         "review": 1,
         "test": 1
       },
-      "evidence_confidence": "medium",
+      "evidence_confidence": "low",
       "evidence_paths": [
         "../../evidence/kibana/kibana-error-boundary-001.md",
         "../../evidence/kibana/kibana-error-boundary-002.md"
@@ -332,7 +332,7 @@
         "review": 1,
         "test": 1
       },
-      "evidence_confidence": "medium",
+      "evidence_confidence": "high",
       "evidence_paths": [
         "../../evidence/kibana/kibana-empty-001.md",
         "../../evidence/kibana/kibana-empty-002.md"
@@ -355,7 +355,7 @@
         "review": 1,
         "test": 1
       },
-      "evidence_confidence": "medium",
+      "evidence_confidence": "low",
       "evidence_paths": [
         "../../evidence/refine/authz-empty-001.md",
         "../../evidence/refine/authz-empty-002.md"

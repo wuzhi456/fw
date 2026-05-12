@@ -1,4 +1,9 @@
 ---
+
+
+
+
+
 id: responsive-mobile-navigation-density
 title: "管理后台在窄屏应调整导航密度与可达性"
 category: frontend-productization
