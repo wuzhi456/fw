@@ -1,1 +1,1 @@
-task_id,group,run_id,execution_order,status,notes
+run_id,execution_order,task_id,group,replicate,base_requirement_path,intervention_path,model,temperature,reasoning_effort,context_length_estimate,injected_experience_count,output_file_count,start_time,end_time,duration_minutes,status,failure_reason,retry_of,execution_quality_verdict,operator,notes

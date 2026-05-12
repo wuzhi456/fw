@@ -1,3 +1,10 @@
+---
+name: frontend-productization
+description: >-
+  Routed injection of 3-5 frontend productization experience units (async/list/form/state/UX/responsive)
+  for Plan/Coding/Review/Test; used in experience-augmented vibe-coding experiments.
+---
+
 # Skill: frontend-productization
 
 Purpose: inject **3 to 5** high-signal frontend productization experience units into Plan / Coding / Review / Test stages without dumping a full checklist.
