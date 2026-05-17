@@ -28,12 +28,12 @@ Status legend: merged→<EU id> means distilled into `frontend-productization/ex
 | C-022 | state | 插件状态与查询上下文不一致 | kibana docs | evidence/kibana/kibana-state-001.md | merged→state-stale-response-guard |
 | C-023 | state | 多标签页脏读 | refine+kibana cross | evidence/refine/dashboard-async-002.md | parked |
 | C-024 | state | 局部缓存与 SSR 不一致 | kibana plugin docs | evidence/kibana/kibana-async-001.md | parked |
-| C-025 | ux-error | 单组件错误白屏整页 | kibana issues | evidence/kibana/kibana-error-boundary-002.md | merged→ux-error-boundary-granularity |
-| C-026 | ux-error | 错误边界过细导致噪音 | kibana contributing | evidence/kibana/kibana-error-boundary-001.md | merged→ux-error-boundary-granularity |
-| C-027 | ux-empty | Discover 无结果提示弱 | kibana tests | evidence/kibana/kibana-empty-002.md | merged→ux-empty-state-actionable |
-| C-028 | ux-empty | 索引模式空数据引导 | kibana discover docs | evidence/kibana/kibana-empty-001.md | merged→ux-empty-state-actionable |
-| C-029 | ux-empty | 403 与空数据混淆 | refine Result | evidence/refine/authz-empty-001.md | merged→ux-fallback-recoverable-errors |
-| C-030 | ux-empty | 非阻塞错误呈现策略 | refine UI docs | evidence/refine/authz-empty-002.md | merged→ux-fallback-recoverable-errors |
+| C-025 | ux | 单组件错误白屏整页 | kibana issues | evidence/kibana/kibana-error-boundary-003.md | merged→ux-error-boundary-granularity |
+| C-026 | ux | 错误边界过细导致噪音 | kibana contributing | evidence/kibana/kibana-error-boundary-001.md | merged→ux-error-boundary-granularity |
+| C-027 | ux | Discover 无结果提示弱 | kibana tests | evidence/kibana/kibana-empty-002.md | merged→ux-empty-state-actionable |
+| C-028 | ux | 索引模式空数据引导 | kibana discover docs | evidence/kibana/kibana-empty-001.md | merged→ux-empty-state-actionable |
+| C-029 | ux | 403 与空数据混淆 | refine Result | evidence/refine/authz-empty-001.md | merged→ux-fallback-recoverable-errors |
+| C-030 | ux | 非阻塞错误呈现策略 | refine UI docs | evidence/refine/authz-empty-002.md | merged→ux-fallback-recoverable-errors |
 | C-031 | responsive | 侧栏小屏溢出 | refine responsive issues | evidence/refine/refine-responsive-001.md | merged→responsive-mobile-navigation-density |
 | C-032 | responsive | 路由+菜单响应式策略 | refine docs | evidence/refine/refine-responsive-002.md | merged→responsive-mobile-navigation-density |
 | C-033 | responsive | 长字段名撑破面板 | kibana overflow issues | evidence/kibana/kibana-overflow-001.md | merged→responsive-long-text-overflow |
