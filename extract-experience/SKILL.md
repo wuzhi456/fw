@@ -56,10 +56,10 @@ Code source scan
 
 依次考虑：
 
-1. **evidence strength**
-2. **risk severity**
-3. **specificity**
-4. **stage fit**
+1. **evidence strength**：优先保留证据更强、可复现的主张。
+2. **risk severity**：同等证据下优先覆盖高风险情形。
+3. **specificity**：优先选择触发条件更具体、边界更清晰的经验。
+4. **stage fit**：优先匹配当前抽取阶段/使用阶段的经验（如 plan/review/test）。
 
 ## 经验登记流程
 
