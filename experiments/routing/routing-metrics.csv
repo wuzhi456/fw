@@ -1,0 +1,7 @@
+task_id,stage,precision_at_5,recall,must_hit,must_total,selected_count,run_file
+task-async-form,coding,0.800,1.000,3,3,5,task-async-form-coding.json
+task-async-form,plan,0.800,1.000,3,3,5,task-async-form-plan.json
+task-list-page,coding,0.800,0.667,2,3,5,task-list-page-coding.json
+task-list-page,plan,0.800,0.667,2,3,5,task-list-page-plan.json
+task-responsive-dashboard,coding,0.400,1.000,2,2,5,task-responsive-dashboard-coding.json
+task-responsive-dashboard,plan,0.400,1.000,2,2,5,task-responsive-dashboard-plan.json
