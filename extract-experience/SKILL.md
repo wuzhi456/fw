@@ -97,7 +97,7 @@ allowed-tools: Read, Write, Edit, Bash
 
 ---
 
-## 流程速览（与 Step 1-8 对应）
+## 流程速览（与 Step 1-8 对应，作为流程图补充）
 
 ```text
 Code source scan
