@@ -16,7 +16,7 @@
 | state-optimistic-rollback | state | partial | keep | 文档/PR 需结合解释。 |
 | state-cache-invalidation | state | strong | keep | useInvalidate 文档强支撑。 |
 | state-stale-response-guard | state | strong | keep | Discover issues 直接支撑。 |
-| ux-error-boundary-granularity | ux | needs-replacement | replace | 低置信证据占比高，需补强。 |
+| ux-error-boundary-granularity | ux | partial | keep | 引入 kibana-error-boundary-003 替换弱证据，置信度升至 medium。 |
 | ux-empty-state-actionable | ux | strong | keep | 空状态 PR 明确可操作提示。 |
 | ux-fallback-recoverable-errors | ux | needs-replacement | replace | 低置信证据拉低 EU。 |
 | responsive-mobile-navigation-density | responsive | partial | keep | Issue+文档可复用。 |
