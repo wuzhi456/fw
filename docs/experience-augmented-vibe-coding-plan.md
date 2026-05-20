@@ -212,6 +212,36 @@ score =
 
 ### 4.5 Experiment Protocol
 
+Human Control Gate:
+
+1. P4 and P5 are human-controlled phases. The human operator decides when to start each run, whether a failed run is retried, whether a run is excluded, when outputs are anonymized, and when scoring begins.
+2. Agents may prepare task prompts, protocol files, logging templates, scoring sheets, anonymization scripts, and analysis drafts, but must not independently execute the full experiment batch.
+3. Agents must not change group assignment, sampling rules, retry rules, failed-run status, scoring anchors, or conclusion wording without explicit human instruction.
+4. Final claims about Skill effectiveness must be reviewed and approved by the human operator after seeing the score table, context-length records, failed-run log, and threat-validity notes.
+
+Execution Quality Audit:
+
+P4/P5 must evaluate experiment execution quality separately from generated application quality. A run with high generated-code quality is not valid evidence if protocol execution was weak.
+
+Execution quality is scored before result scoring:
+
+| Dimension | Pass condition |
+| --- | --- |
+| Protocol adherence | Task prompt, group intervention, model/runtime setting, and allowed tools match `experiment-protocol.md`. |
+| Run integrity | Start time, end time, operator, group, task id, run id, retry status, and failure status are recorded. |
+| Group isolation | Baseline, Experience Skill, and Full Prompt inputs differ only by the planned group intervention. |
+| Randomization / ordering | Run order follows the pre-generated randomization table or records an explicit deviation. |
+| Anonymization | Outputs are anonymized before scoring, and group labels are hidden from reviewers. |
+| Data completeness | Input, output, logs, context-length estimate, injected experience count, and failed-run reason are preserved. |
+| Deviation handling | Any retry, exclusion, timeout, manual repair, or platform incident is recorded before scoring. |
+| Reviewer independence | Reviewers use the frozen Rubric and do not inspect group identity before submitting scores. |
+
+Execution quality verdict:
+
+1. `VALID`: all dimensions pass, or deviations are minor and documented before scoring.
+2. `VALID_WITH_LIMITATIONS`: one or more non-critical deviations exist; result can be used but must be caveated in the report.
+3. `INVALID`: group isolation, anonymization, failed-run accounting, or scoring independence is broken; run must not support effectiveness claims.
+
 主实验任务：
 
 1. 数据列表页：包含搜索和筛选，但需求不显式提醒 loading、empty、分页或竞态。
@@ -312,10 +342,19 @@ score =
 
 目标：从主样本项目中提取可迁移的前端产品化经验候选。
 
+执行策略：
+
+1. 不全量读取或总结大型仓库；每次只围绕一个质量类别、一个项目和一个证据问题做定向检索。
+2. 优先使用 GitHub 代码搜索、Issue/PR 搜索和官方文档定位候选证据；只有当需要核对上下文或测试实现时，才对目标项目做 shallow clone 或 sparse checkout。
+3. 对大型项目采用分层采样：每个主样本项目先选 2 到 3 个高相关模块或标签，再按六类产品化问题抽取证据。
+4. 每个项目的 Issue/PR 初筛上限为每类问题 10 条候选，进入人工蒸馏的高置信证据每类保留 2 到 4 条。
+5. 单个 Agent 不承担全仓库分析；证据采集按项目或质量类别拆分为独立小批次，批次产物只包含 evidence 记录和候选经验摘要。
+6. 如果 GitHub 在线检索已能提供稳定证据，不要求用户提前 clone；如果网络、权限、速率限制或需要本地搜索上下文，再由执行者 shallow clone 指定仓库。
+
 任务：
 
-1. 静态分析代码结构，标记请求封装、状态分支、列表策略、表单处理、错误边界、响应式处理。
-2. 挖掘 Issue、PR、commit message 和测试用例，关注竞态、卡顿、失败恢复、重复提交、空数据和布局问题。
+1. 定向分析代码结构，标记请求封装、状态分支、列表策略、表单处理、错误边界、响应式处理。
+2. 按关键词、标签、模块和历史问题挖掘 Issue、PR、commit message 和测试用例，关注竞态、卡顿、失败恢复、重复提交、空数据和布局问题。
 3. 为每条候选经验建立 evidence 记录。
 4. 初筛候选经验，剔除只适用于单项目内部架构的特例。
 
@@ -330,6 +369,7 @@ score =
 1. 至少形成 30 条候选经验。
 2. 每类前端产品化问题至少有 3 条候选经验。
 3. 每条候选经验至少关联 1 条 evidence。
+4. 每个证据采集批次必须记录检索 query、检索范围、采样上限、入选理由和排除理由。
 
 ### P2. Experience Unit Schema 与样例库
 
@@ -385,6 +425,8 @@ score =
 
 目标：在固定协议下比较 Baseline、Experience Skill 和 Full Prompt 的生成质量。
 
+控制权：P4 由人工主控。Agent 负责准备输入、记录模板、匿名化辅助和自动检查脚本；是否启动某次运行、是否重试、是否接受 failed-run 记账，以及是否进入下一组实验，均由人工确认。
+
 任务：
 
 1. 为每个实验任务准备完全一致的基础需求文本。
@@ -405,10 +447,13 @@ score =
 1. MVP 至少 18 次有效或有记账的运行。
 2. 每次运行有完整输入、输出和运行元数据。
 3. failed-run 有失败原因和重试记录。
+4. 每次运行都有 execution quality verdict；`INVALID` runs 不进入主效果比较，只进入失败与偏差分析。
 
 ### P5. 评分、分析与报告
 
 目标：用冻结 Rubric 评估结果，并形成可信的实验分析。
+
+控制权：P5 由人工主控。Agent 可以汇总评分、计算统计量、整理分歧项和起草报告，但不得自行解除盲评、修改评分、仲裁分歧、剔除异常结果或下最终结论。
 
 任务：
 
@@ -430,6 +475,7 @@ score =
 1. kappa `>= 0.65`，或记录复评过程。
 2. 报告包含均值、中位数、标准差和效应量讨论。
 3. 报告明确说明哪些结论是强结论，哪些只是方向性观察。
+4. 报告必须单独列出 execution quality summary，包括 `VALID`、`VALID_WITH_LIMITATIONS`、`INVALID` 的数量和原因。
 
 ## 6. Acceptance Criteria
 

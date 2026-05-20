@@ -1,0 +1,41 @@
+{
+  "reviewer_id": "llm-reviewer",
+  "rubric_ref": "rubric.md",
+  "run_path": "experiments/runs/task-async-form/baseline/rep-01",
+  "functional": {
+    "requirement_completion": 3,
+    "primary_path_operability": 3,
+    "interaction_completeness": 3
+  },
+  "productization": {
+    "async_state_handling": 2,
+    "list_data_performance": null,
+    "list_data_performance_na_reason": "The task is a single form with no list, pagination, or large-dataset rendering scope.",
+    "form_robustness": 3,
+    "state_consistency": 2,
+    "error_empty_ux": 2,
+    "responsive_layout": 2
+  },
+  "code_quality": {
+    "component_boundaries": 2,
+    "request_state_modeling": 3,
+    "reuse_consistency": 3,
+    "test_coverage": 0,
+    "maintainability": 3
+  },
+  "category_functional_points": 20.0,
+  "category_productization_points": 33.0,
+  "category_code_quality_points": 25.67,
+  "total_score_0_100": 78.67,
+  "summary_comment": "The artifact satisfies the frozen async-validated form task: debounced and blur-triggered server validation gates submit, and POST submit surfaces success and recoverable error paths with a documented mock API in Vite. Productization is solid on the form itself but omits explicit retry affordances and deeper submit-side stale-response modeling beyond disabling the button. Code is clear and stateful in one module, yet there are no automated tests and the UI logic is not split into smaller components.",
+  "files_reviewed": [
+    "README.md",
+    "package.json",
+    "vite.config.ts",
+    "index.html",
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/App.css",
+    "src/index.css"
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "reviewer_id": "llm-reviewer",
+  "rubric_ref": "rubric.md",
+  "run_path": "experiments/runs/task-async-form/full-prompt/rep-02",
+  "functional": {
+    "requirement_completion": 3,
+    "primary_path_operability": 3,
+    "interaction_completeness": 3
+  },
+  "productization": {
+    "async_state_handling": 2,
+    "list_data_performance": null,
+    "list_data_performance_na_reason": "The task is a single form with bounded inputs; there is no large list, pagination, or virtualization scope.",
+    "form_robustness": 2,
+    "state_consistency": 3,
+    "error_empty_ux": 2,
+    "responsive_layout": 3
+  },
+  "code_quality": {
+    "component_boundaries": 2,
+    "request_state_modeling": 3,
+    "reuse_consistency": 2,
+    "test_coverage": 0,
+    "maintainability": 2
+  },
+  "category_functional_points": 20.0,
+  "category_productization_points": 36.0,
+  "category_code_quality_points": 21.0,
+  "total_score_0_100": 77.0,
+  "summary_comment": "The output is a runnable Vite/React form that POSTs via JSONPlaceholder and gates submit on asynchronous username and email checks, with debouncing, aborts, sequencing to avoid stale updates, and submit retry/timeout handling. Productization is strong on layout and remote-field consistency but field-level failures lean on re-editing rather than explicit recovery controls, and empty guidance is mostly implicit. The codebase is clear and explicitly models remote states, but the main form is large, validation logic is duplicated across fields, and there are no automated tests.",
+  "files_reviewed": [
+    "package.json",
+    "index.html",
+    "vite.config.ts",
+    "tsconfig.json",
+    "tsconfig.node.json",
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/AsyncRemoteForm.tsx",
+    "src/api.ts",
+    "src/ErrorBoundary.tsx",
+    "src/index.css",
+    "src/vite-env.d.ts"
+  ]
+}

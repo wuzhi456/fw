@@ -1,0 +1,437 @@
+{
+  "version": 1,
+  "units": [
+    {
+      "id": "async-explicit-states",
+      "title": "异步请求必须显式建模用户可感知状态",
+      "tags": [
+        "async",
+        "request",
+        "loading",
+        "error",
+        "empty-state"
+      ],
+      "triggers": [
+        "页面需要从 API 加载数据"
+      ],
+      "risk_severity": "high",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "medium",
+      "evidence_paths": [
+        "../../evidence/react-admin/async-explicit-states-001.md",
+        "../../evidence/react-admin/async-explicit-states-002.md"
+      ]
+    },
+    {
+      "id": "async-stale-cancel",
+      "title": "并发与导航场景下应取消或忽略过期请求",
+      "tags": [
+        "async",
+        "race",
+        "cancellation",
+        "stale"
+      ],
+      "triggers": [
+        "筛选、分页或路由切换会触发多次请求"
+      ],
+      "risk_severity": "high",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "medium",
+      "evidence_paths": [
+        "../../evidence/react-admin/async-stale-cancel-001.md",
+        "../../evidence/kibana/kibana-state-002.md"
+      ]
+    },
+    {
+      "id": "async-retry-recover",
+      "title": "可恢复错误应提供重试与降级路径",
+      "tags": [
+        "async",
+        "retry",
+        "error-recovery"
+      ],
+      "triggers": [
+        "依赖外部 API 或不稳定网络"
+      ],
+      "risk_severity": "medium",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "medium",
+      "evidence_paths": [
+        "../../evidence/react-admin/async-retry-001.md",
+        "../../evidence/react-admin/async-retry-002.md"
+      ]
+    },
+    {
+      "id": "list-pagination-server",
+      "title": "大数据列表应默认走服务端分页与稳定排序",
+      "tags": [
+        "list",
+        "pagination",
+        "performance"
+      ],
+      "triggers": [
+        "列表可能超过单页合理渲染量"
+      ],
+      "risk_severity": "high",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "medium",
+      "evidence_paths": [
+        "../../evidence/react-admin/list-pagination-001.md",
+        "../../evidence/react-admin/list-pagination-002.md"
+      ]
+    },
+    {
+      "id": "list-virtualize-window",
+      "title": "超长列表需要窗口化或虚拟化渲染",
+      "tags": [
+        "list",
+        "virtual",
+        "performance"
+      ],
+      "triggers": [
+        "单屏需展示上千行或上千节点"
+      ],
+      "risk_severity": "medium",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "medium",
+      "evidence_paths": [
+        "../../evidence/react-admin/list-window-001.md",
+        "../../evidence/react-admin/list-window-002.md"
+      ]
+    },
+    {
+      "id": "list-incremental-prefetch",
+      "title": "列表与无限滚动需要受控的增量加载与背压",
+      "tags": [
+        "list",
+        "infinite",
+        "prefetch"
+      ],
+      "triggers": [
+        "需要无限滚动或懒加载更多"
+      ],
+      "risk_severity": "medium",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "medium",
+      "evidence_paths": [
+        "../../evidence/kibana/kibana-list-perf-001.md",
+        "../../evidence/kibana/kibana-list-perf-002.md"
+      ]
+    },
+    {
+      "id": "form-duplicate-submit-guard",
+      "title": "表单提交必须防重复点击与重复 mutation",
+      "tags": [
+        "form",
+        "mutation",
+        "duplicate-submit"
+      ],
+      "triggers": [
+        "创建/支付/审批等写操作"
+      ],
+      "risk_severity": "high",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "medium",
+      "evidence_paths": [
+        "../../evidence/react-admin/form-dup-guard-001.md",
+        "../../evidence/react-admin/form-dup-guard-002.md"
+      ]
+    },
+    {
+      "id": "form-async-validation-feedback",
+      "title": "异步校验需要防抖、字段级状态与可达错误",
+      "tags": [
+        "form",
+        "validation",
+        "async"
+      ],
+      "triggers": [
+        "邮箱/用户名唯一性等远程校验"
+      ],
+      "risk_severity": "medium",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "high",
+      "evidence_paths": [
+        "../../evidence/refine/form-async-validation-001.md",
+        "../../evidence/refine/form-async-validation-002.md"
+      ]
+    },
+    {
+      "id": "form-submit-recovery",
+      "title": "提交失败应保留用户输入并支持安全重试",
+      "tags": [
+        "form",
+        "error",
+        "recovery"
+      ],
+      "triggers": [
+        "多步表单或长表单"
+      ],
+      "risk_severity": "high",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "high",
+      "evidence_paths": [
+        "../../evidence/refine/form-submit-recover-001.md",
+        "../../evidence/refine/form-submit-recover-002.md"
+      ]
+    },
+    {
+      "id": "state-optimistic-rollback",
+      "title": "乐观更新必须可回滚且与权限一致",
+      "tags": [
+        "state",
+        "optimistic",
+        "mutation"
+      ],
+      "triggers": [
+        "列表内联编辑或点赞类交互"
+      ],
+      "risk_severity": "high",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "medium",
+      "evidence_paths": [
+        "../../evidence/refine/mutation-invalidation-001.md",
+        "../../evidence/refine/mutation-invalidation-002.md"
+      ]
+    },
+    {
+      "id": "state-cache-invalidation",
+      "title": "变更后缓存失效范围应精确且可预测",
+      "tags": [
+        "state",
+        "cache",
+        "invalidation"
+      ],
+      "triggers": [
+        "仪表板多卡片共享底层查询"
+      ],
+      "risk_severity": "medium",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "high",
+      "evidence_paths": [
+        "../../evidence/refine/mutation-invalidation-001.md",
+        "../../evidence/kibana/kibana-state-001.md"
+      ]
+    },
+    {
+      "id": "state-stale-response-guard",
+      "title": "筛选上下文变化时必须丢弃不匹配响应",
+      "tags": [
+        "state",
+        "stale",
+        "race"
+      ],
+      "triggers": [
+        "搜索框、时间范围、租户切换会改变查询上下文"
+      ],
+      "risk_severity": "high",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "high",
+      "evidence_paths": [
+        "../../evidence/kibana/kibana-state-001.md",
+        "../../evidence/kibana/kibana-state-002.md"
+      ]
+    },
+    {
+      "id": "ux-error-boundary-granularity",
+      "title": "错误边界粒度应平衡隔离与信息密度",
+      "tags": [
+        "error-boundary",
+        "resilience"
+      ],
+      "triggers": [
+        "多模块页面或插件化布局"
+      ],
+      "risk_severity": "medium",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "medium",
+      "evidence_paths": [
+        "../../evidence/kibana/kibana-error-boundary-002.md",
+        "../../evidence/kibana/kibana-error-boundary-003.md"
+      ]
+    },
+    {
+      "id": "ux-empty-state-actionable",
+      "title": "空数据状态应解释原因并给出下一步",
+      "tags": [
+        "empty-state",
+        "ux"
+      ],
+      "triggers": [
+        "列表、搜索结果、筛选结果可能为空"
+      ],
+      "risk_severity": "medium",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "high",
+      "evidence_paths": [
+        "../../evidence/kibana/kibana-empty-001.md",
+        "../../evidence/kibana/kibana-empty-002.md"
+      ]
+    },
+    {
+      "id": "ux-fallback-recoverable-errors",
+      "title": "可恢复错误应通过非阻塞反馈呈现",
+      "tags": [
+        "toast",
+        "error-ux"
+      ],
+      "triggers": [
+        "后台保存、自动同步"
+      ],
+      "risk_severity": "low",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "low",
+      "evidence_paths": [
+        "../../evidence/refine/authz-empty-001.md",
+        "../../evidence/refine/authz-empty-002.md"
+      ]
+    },
+    {
+      "id": "responsive-mobile-navigation-density",
+      "title": "管理后台在窄屏应调整导航密度与可达性",
+      "tags": [
+        "responsive",
+        "mobile",
+        "admin"
+      ],
+      "triggers": [
+        "需要手机或平板可用的后台"
+      ],
+      "risk_severity": "medium",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "medium",
+      "evidence_paths": [
+        "../../evidence/refine/refine-responsive-001.md",
+        "../../evidence/refine/refine-responsive-002.md"
+      ]
+    },
+    {
+      "id": "responsive-long-text-overflow",
+      "title": "长文本与标识符需要截断、换行或详情展开",
+      "tags": [
+        "responsive",
+        "overflow",
+        "text"
+      ],
+      "triggers": [
+        "表格列含长 ID、URL、邮箱"
+      ],
+      "risk_severity": "medium",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "medium",
+      "evidence_paths": [
+        "../../evidence/kibana/kibana-overflow-001.md",
+        "../../evidence/kibana/kibana-overflow-002.md"
+      ]
+    },
+    {
+      "id": "responsive-dense-dashboard-layout",
+      "title": "数据密集仪表需自适应网格与最小宽度策略",
+      "tags": [
+        "responsive",
+        "dashboard",
+        "grid"
+      ],
+      "triggers": [
+        "多 KPI 卡片与图表同屏"
+      ],
+      "risk_severity": "medium",
+      "stage_fit": {
+        "plan": 1,
+        "coding": 1,
+        "review": 1,
+        "test": 1
+      },
+      "evidence_confidence": "medium",
+      "evidence_paths": [
+        "../../evidence/refine/dashboard-async-001.md",
+        "../../evidence/refine/dashboard-async-002.md"
+      ]
+    }
+  ]
+}

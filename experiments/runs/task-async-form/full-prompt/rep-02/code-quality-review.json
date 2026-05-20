@@ -1,0 +1,22 @@
+{
+  "run_path": "experiments/runs/task-async-form/full-prompt/rep-02",
+  "metrics": {
+    "component_boundaries": 2,
+    "request_state_modeling": 3,
+    "reuse_consistency": 2,
+    "test_coverage": 1,
+    "maintainability": 2
+  },
+  "code_quality_points": 23.33,
+  "summary_comment": "The output splits network access (`api.ts`), shell (`App.tsx`), resilience (`ErrorBoundary.tsx`), and the form UI (`AsyncRemoteForm.tsx`) in a coherent way without unnecessary fragmentation. Request and field state are modeled explicitly (`idle`/`checking`/`valid`/`invalid`, submit flags, abort + sequence guards, submit timeout), which avoids success-path-only logic. Reuse is mixed: shared message helpers and API functions are consistent, but username and email validation/scheduling are largely copy-paste in the form component. There are no automated tests or test scripts in `package.json`, though `api` functions and pure branching are structurally testable. Overall readability and TypeScript clarity are good, but the duplicated field pipelines and large single component file make future edits slightly more error-prone than a more factored layout.",
+  "files_reviewed": [
+    "package.json",
+    "src/App.tsx",
+    "src/AsyncRemoteForm.tsx",
+    "src/api.ts",
+    "src/ErrorBoundary.tsx",
+    "src/index.css",
+    "src/main.tsx",
+    "src/vite-env.d.ts"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "reviewer_id": "llm-reviewer",
+  "rubric_ref": "rubric.md",
+  "run_path": "experiments/runs/task-async-form/experience-skill/rep-03",
+  "functional": {
+    "requirement_completion": 3,
+    "primary_path_operability": 3,
+    "interaction_completeness": 3
+  },
+  "productization": {
+    "async_state_handling": 3,
+    "list_data_performance": null,
+    "list_data_performance_na_reason": "The artifact is a single-profile form with no list, pagination, virtualization, or large-dataset rendering scope.",
+    "form_robustness": 3,
+    "state_consistency": 3,
+    "error_empty_ux": 3,
+    "responsive_layout": 2
+  },
+  "code_quality": {
+    "component_boundaries": 2,
+    "request_state_modeling": 3,
+    "reuse_consistency": 3,
+    "test_coverage": 1,
+    "maintainability": 3
+  },
+  "category_functional_points": 20.0,
+  "category_productization_points": 42.0,
+  "category_code_quality_points": 28.0,
+  "total_score_0_100": 90.0,
+  "summary_comment": "The output satisfies the frozen task: a remote-backed form with debounced server-side username validation that gates submit, plus submit flows for success, 422 field errors, and recoverable 500 with retry and idempotency. Async UX is strong (pending, errors, stale-response guard, duplicate-submit lock), but layout is only moderately tuned for small viewports and there are no automated tests despite testable API helpers. Most logic lives in one large App module with an inlined hook.",
+  "files_reviewed": [
+    "package.json",
+    "src/App.tsx",
+    "src/App.css",
+    "src/main.tsx",
+    "src/remoteApi.ts",
+    "vite.config.ts",
+    "index.html"
+  ]
+}

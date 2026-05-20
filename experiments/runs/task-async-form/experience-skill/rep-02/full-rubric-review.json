@@ -1,0 +1,42 @@
+{
+  "reviewer_id": "llm-reviewer",
+  "rubric_ref": "rubric.md",
+  "run_path": "experiments/runs/task-async-form/experience-skill/rep-02",
+  "functional": {
+    "requirement_completion": 3,
+    "primary_path_operability": 3,
+    "interaction_completeness": 3
+  },
+  "productization": {
+    "async_state_handling": 3,
+    "list_data_performance": null,
+    "list_data_performance_na_reason": "The task is a single-record form with no list, pagination, or large-dataset rendering scope.",
+    "form_robustness": 3,
+    "state_consistency": 3,
+    "error_empty_ux": 3,
+    "responsive_layout": 2
+  },
+  "code_quality": {
+    "component_boundaries": 2,
+    "request_state_modeling": 3,
+    "reuse_consistency": 2,
+    "test_coverage": 0,
+    "maintainability": 3
+  },
+  "category_functional_points": 20.00,
+  "category_productization_points": 42.00,
+  "category_code_quality_points": 23.33,
+  "total_score_0_100": 85.33,
+  "summary_comment": "The artifact cleanly implements remote async handle validation (debounce, abort, stale-response guard) and gated submit to `/api/submit`, with duplicate-submit protection, structured error handling (422 vs network), and recoverable UX including retry. Layout and accessibility touches are solid though not exhaustive for every overflow edge case. The main gap versus a top score is the absence of automated tests and a single large `App.tsx` instead of smaller components or hooks.",
+  "files_reviewed": [
+    "README.md",
+    "package.json",
+    "vite.config.ts",
+    "src/App.tsx",
+    "src/main.tsx",
+    "src/App.css",
+    "src/index.css",
+    "docs/optimistic-updates.md",
+    "eslint.config.js"
+  ]
+}

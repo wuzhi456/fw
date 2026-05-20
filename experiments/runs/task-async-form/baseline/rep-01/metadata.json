@@ -1,0 +1,12 @@
+{
+  "run_id": "task-async-form_baseline_rep-01_2026-05-12",
+  "task_id": "task-async-form",
+  "group": "baseline",
+  "replicate": 1,
+  "base_requirement_path": "experiments/tasks/task-async-form.md",
+  "intervention_path": "experiments/interventions/baseline.md",
+  "injected_experience_count": 0,
+  "status": "valid",
+  "duration_minutes": 12,
+  "notes": "Vite react-ts scaffold under output/. Mock POST /api/validate-code and /api/submit via Vite dev/preview middleware with artificial delays. Access code field debounced + blur async validation; submit disabled until server returns valid. npm run build exit 0."
+}

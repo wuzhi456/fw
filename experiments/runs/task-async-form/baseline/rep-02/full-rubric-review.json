@@ -1,0 +1,42 @@
+{
+  "reviewer_id": "llm-reviewer",
+  "rubric_ref": "rubric.md",
+  "run_path": "experiments/runs/task-async-form/baseline/rep-02",
+  "functional": {
+    "requirement_completion": 3,
+    "primary_path_operability": 3,
+    "interaction_completeness": 3
+  },
+  "productization": {
+    "async_state_handling": 2,
+    "list_data_performance": null,
+    "list_data_performance_na_reason": "This artifact is a small two-field form with no list, pagination, virtualization, or incremental loading scope.",
+    "form_robustness": 2,
+    "state_consistency": 1,
+    "error_empty_ux": 2,
+    "responsive_layout": 2
+  },
+  "code_quality": {
+    "component_boundaries": 2,
+    "request_state_modeling": 2,
+    "reuse_consistency": 3,
+    "test_coverage": 0,
+    "maintainability": 3
+  },
+  "category_functional_points": 20.0,
+  "category_productization_points": 27.0,
+  "category_code_quality_points": 23.33,
+  "total_score_0_100": 70.33,
+  "summary_comment": "The app meets the frozen task: a remote-backed form with async server token validation that gates submit, clear invalid feedback, and a successful submit path. Loading and disabled-submit behavior are handled, and token validation is modeled with an explicit discriminated state. Gaps versus a mature score band include no guard against stale async validation results if the user edits the token while a check is in flight, no automated tests, and no explicit retry affordance beyond re-editing and blurring again.",
+  "files_reviewed": [
+    "package.json",
+    "index.html",
+    "tsconfig.json",
+    "vite.config.ts",
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/api.ts",
+    "src/index.css",
+    "src/vite-env.d.ts"
+  ]
+}

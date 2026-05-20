@@ -1,0 +1,23 @@
+{
+  "run_id": "task-async-form-experience-skill-rep-02",
+  "execution_order": null,
+  "task_id": "task-async-form",
+  "group": "experience-skill",
+  "replicate": 2,
+  "base_requirement_path": "experiments/tasks/task-async-form.md",
+  "intervention_path": "experiments/interventions/experience-skill.md",
+  "model": "",
+  "temperature": "",
+  "reasoning_effort": "",
+  "context_length_estimate": "",
+  "injected_experience_count": 5,
+  "output_file_count": null,
+  "start_time": "",
+  "end_time": "",
+  "duration_minutes": null,
+  "status": "valid",
+  "failure_reason": "",
+  "retry_of": "",
+  "execution_quality_verdict": "VALID",
+  "operator": ""
+}

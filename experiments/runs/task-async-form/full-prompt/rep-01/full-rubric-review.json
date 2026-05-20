@@ -1,0 +1,41 @@
+{
+  "reviewer_id": "llm-reviewer",
+  "rubric_ref": "rubric.md",
+  "run_path": "experiments/runs/task-async-form/full-prompt/rep-01",
+  "functional": {
+    "requirement_completion": 3,
+    "primary_path_operability": 3,
+    "interaction_completeness": 2
+  },
+  "productization": {
+    "async_state_handling": 3,
+    "list_data_performance": null,
+    "list_data_performance_na_reason": "Single-page registration form with no list, pagination, or large-dataset rendering scope.",
+    "form_robustness": 3,
+    "state_consistency": 3,
+    "error_empty_ux": 3,
+    "responsive_layout": 2
+  },
+  "code_quality": {
+    "component_boundaries": 3,
+    "request_state_modeling": 3,
+    "reuse_consistency": 3,
+    "test_coverage": 1,
+    "maintainability": 3
+  },
+  "category_functional_points": 17.78,
+  "category_productization_points": 42.0,
+  "category_code_quality_points": 30.33,
+  "total_score_0_100": 90.11,
+  "summary_comment": "The output clearly satisfies the frozen task: a React form calls a mock remote API, blocks submit until async username validation succeeds, and supports correction after server-side invalid/error paths with debouncing, aborts, stale-response guards, and idempotent submit keys. Layout and feedback are generally polished, but the empty-state “Go to display name” control focuses the username field instead of display name (also diverges from PLAN.md), and there are no automated tests despite test-friendly mocks.",
+  "files_reviewed": [
+    "README.md",
+    "PLAN.md",
+    "package.json",
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/App.css",
+    "src/mockRemoteApi.ts",
+    "src/FormErrorBoundary.tsx"
+  ]
+}

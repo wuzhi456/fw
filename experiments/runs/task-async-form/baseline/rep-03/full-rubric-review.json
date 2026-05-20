@@ -1,0 +1,44 @@
+{
+  "reviewer_id": "llm-reviewer",
+  "rubric_ref": "rubric.md",
+  "run_path": "experiments/runs/task-async-form/baseline/rep-03",
+  "functional": {
+    "requirement_completion": 3,
+    "primary_path_operability": 3,
+    "interaction_completeness": 3
+  },
+  "productization": {
+    "async_state_handling": 2,
+    "list_data_performance": null,
+    "list_data_performance_na_reason": "The task is a single form with no list, pagination, or large-dataset rendering scope.",
+    "form_robustness": 2,
+    "state_consistency": 1,
+    "error_empty_ux": 2,
+    "responsive_layout": 2
+  },
+  "code_quality": {
+    "component_boundaries": 2,
+    "request_state_modeling": 3,
+    "reuse_consistency": 3,
+    "test_coverage": 1,
+    "maintainability": 3
+  },
+  "category_functional_points": 20.0,
+  "category_productization_points": 27.0,
+  "category_code_quality_points": 28.0,
+  "total_score_0_100": 75.0,
+  "summary_comment": "The deliverable satisfies the frozen task: a mock remote API, async username validation on blur that blocks submit until valid, and a successful submit path after correcting a failing value. Loading and error feedback are present and the project builds cleanly. Gaps versus a mature score include no stale-response or in-flight guards for overlapping validations, no automated tests, and UX that relies on re-blur rather than explicit retry.",
+  "files_reviewed": [
+    "package.json",
+    "index.html",
+    "vite.config.ts",
+    "tsconfig.json",
+    "tsconfig.app.json",
+    "tsconfig.node.json",
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/mockApi.ts",
+    "src/index.css",
+    "src/vite-env.d.ts"
+  ]
+}

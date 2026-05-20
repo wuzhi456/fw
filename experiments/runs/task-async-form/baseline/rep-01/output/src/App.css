@@ -1,0 +1,126 @@
+.form-page {
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem;
+  text-align: left;
+}
+
+.form-page h1 {
+  font-size: 1.75rem;
+  margin: 0 0 0.75rem;
+}
+
+.hint {
+  margin: 0 0 1.5rem;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  text-align: left;
+}
+
+.field span {
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.field input {
+  font: inherit;
+  padding: 0.5rem 0.65rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.field input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.field-help {
+  min-height: 1.25rem;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.status.checking {
+  color: var(--text);
+}
+
+.status.ok {
+  color: #15803d;
+}
+
+.status.bad {
+  color: #b91c1c;
+}
+
+@media (prefers-color-scheme: dark) {
+  .status.ok {
+    color: #4ade80;
+  }
+  .status.bad {
+    color: #fca5a5;
+  }
+}
+
+.card button[type='submit'] {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: var(--accent);
+  color: #fff;
+}
+
+.card button[type='submit']:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.banner {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.banner h2 {
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem;
+}
+
+.banner pre {
+  margin: 0;
+  font-size: 0.8rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.banner.success {
+  border: 1px solid #15803d;
+  background: rgba(21, 128, 61, 0.08);
+}
+
+.banner.error {
+  border: 1px solid #b91c1c;
+  background: rgba(185, 28, 28, 0.08);
+}

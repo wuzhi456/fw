@@ -1,0 +1,7 @@
+{
+  "group": "full-prompt",
+  "replicate": 1,
+  "injected_experience_count": 18,
+  "intervention_path": "experiments/interventions/full-prompt.md",
+  "task_slug": "task-async-form"
+}
