@@ -9,13 +9,13 @@ user-invocable: true
 allowed-tools: Read, Write, Edit, Bash
 ---
 
-> **语言 / Language**: 默认中文回复；若用户明确要求英文，再切换英文。
-
 # Skill: extract-experience
 
 ## 目标
 
 将经验抽取流程标准化为**可复现、可审计、可扩展**的研究型资产包，形成证据链、抽取流程和案例。
+
+> **语言 / Language**: 默认中文回复；若用户明确要求英文，再切换英文。
 
 ## 触发条件
 
@@ -97,7 +97,7 @@ allowed-tools: Read, Write, Edit, Bash
 
 ---
 
-## 固化抽取流程（摘要）
+## 流程速览（与 Step 1-8 对应）
 
 ```text
 Code source scan
