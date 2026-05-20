@@ -309,10 +309,10 @@
         "review": 1,
         "test": 1
       },
-      "evidence_confidence": "low",
+      "evidence_confidence": "medium",
       "evidence_paths": [
-        "../../evidence/kibana/kibana-error-boundary-001.md",
-        "../../evidence/kibana/kibana-error-boundary-002.md"
+        "../../evidence/kibana/kibana-error-boundary-002.md",
+        "../../evidence/kibana/kibana-error-boundary-003.md"
       ]
     },
     {
