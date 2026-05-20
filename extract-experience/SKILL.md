@@ -36,7 +36,7 @@ allowed-tools: Read, Write, Edit, Bash
 |------|----------|
 | 读取现有经验、证据、规范 | `Read` |
 | 更新 candidate registry / EU / case study | `Write` / `Edit` |
-| 批量证据审计（需要时） | `Bash` → `python3 scripts/apply_evidence_audit.py` |
+| 批量证据审计 (需要时) | `Bash` → `python3 scripts/apply_evidence_audit.py` |
 | 校验 experience-index / evidence 路径 | `Bash` → `python3 scripts/validate_frontend_productization_skill.py` |
 
 ---
@@ -89,7 +89,7 @@ allowed-tools: Read, Write, Edit, Bash
 
 ### Step 7：登记与沉淀
 
-更新 candidate registry、evidence-audit-table、case study（如需要）。
+更新 candidate registry、evidence-audit-table、case study (如需要)。
 
 ### Step 8：校验
 
