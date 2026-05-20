@@ -1,0 +1,139 @@
+{
+  "task_id": "task-async-form",
+  "stage": "plan",
+  "task_file": "experiments\\tasks\\task-async-form.md",
+  "cue_tokens": [
+    "async",
+    "form",
+    "mutation",
+    "request",
+    "ux"
+  ],
+  "selected": [
+    {
+      "unit_id": "async-explicit-states",
+      "title": "异步请求必须显式建模用户可感知状态",
+      "channel": "A",
+      "score": 1.22,
+      "trigger_match": 2,
+      "risk_match": 1,
+      "stage_match": 1,
+      "confidence_weight": 0.7,
+      "risk_severity": "high",
+      "matched_cues": [
+        "async",
+        "request"
+      ],
+      "failure_mode": "No explicit loading/error/empty state for async data."
+    },
+    {
+      "unit_id": "form-duplicate-submit-guard",
+      "title": "表单提交必须防重复点击与重复 mutation",
+      "channel": "A",
+      "score": 1.22,
+      "trigger_match": 2,
+      "risk_match": 1,
+      "stage_match": 1,
+      "confidence_weight": 0.7,
+      "risk_severity": "high",
+      "matched_cues": [
+        "form",
+        "mutation"
+      ],
+      "failure_mode": "Duplicate submits trigger repeated mutations."
+    },
+    {
+      "unit_id": "form-async-validation-feedback",
+      "title": "异步校验需要防抖、字段级状态与可达错误",
+      "channel": "B",
+      "score": 1.25,
+      "trigger_match": 2,
+      "risk_match": 1,
+      "stage_match": 1,
+      "confidence_weight": 1.0,
+      "risk_severity": "medium",
+      "matched_cues": [
+        "async",
+        "form"
+      ],
+      "failure_mode": "Async validation lacks per-field feedback and debouncing."
+    },
+    {
+      "unit_id": "form-submit-recovery",
+      "title": "提交失败应保留用户输入并支持安全重试",
+      "channel": "B",
+      "score": 0.9,
+      "trigger_match": 1,
+      "risk_match": 1,
+      "stage_match": 1,
+      "confidence_weight": 1.0,
+      "risk_severity": "high",
+      "matched_cues": [
+        "form"
+      ],
+      "failure_mode": "Failed submit loses user input or lacks safe retry."
+    },
+    {
+      "unit_id": "ux-empty-state-actionable",
+      "title": "空数据状态应解释原因并给出下一步",
+      "channel": "B",
+      "score": 0.9,
+      "trigger_match": 1,
+      "risk_match": 1,
+      "stage_match": 1,
+      "confidence_weight": 1.0,
+      "risk_severity": "medium",
+      "matched_cues": [
+        "ux"
+      ],
+      "failure_mode": "Empty states lack guidance for next steps."
+    }
+  ],
+  "near_misses": [
+    {
+      "unit_id": "async-retry-recover",
+      "title": "可恢复错误应提供重试与降级路径",
+      "channel": "B",
+      "score": 0.87,
+      "trigger_match": 1,
+      "risk_match": 1,
+      "stage_match": 1,
+      "confidence_weight": 0.7,
+      "risk_severity": "medium",
+      "matched_cues": [
+        "async"
+      ],
+      "failure_mode": "Recoverable errors lack retry or fallback path."
+    },
+    {
+      "unit_id": "async-stale-cancel",
+      "title": "并发与导航场景下应取消或忽略过期请求",
+      "channel": "B",
+      "score": 0.87,
+      "trigger_match": 1,
+      "risk_match": 1,
+      "stage_match": 1,
+      "confidence_weight": 0.7,
+      "risk_severity": "high",
+      "matched_cues": [
+        "async"
+      ],
+      "failure_mode": "Stale responses overwrite newer state during rapid changes."
+    },
+    {
+      "unit_id": "ux-error-boundary-granularity",
+      "title": "错误边界粒度应平衡隔离与信息密度",
+      "channel": "B",
+      "score": 0.8400000000000001,
+      "trigger_match": 1,
+      "risk_match": 1,
+      "stage_match": 1,
+      "confidence_weight": 0.4,
+      "risk_severity": "medium",
+      "matched_cues": [
+        "ux"
+      ],
+      "failure_mode": "Errors take down too much UI without isolation."
+    }
+  ]
+}

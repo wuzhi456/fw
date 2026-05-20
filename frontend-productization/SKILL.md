@@ -1,93 +1,110 @@
 ---
 name: frontend-productization
 description: >-
-  Routed injection of 3-5 frontend productization experience units (async/list/form/state/UX/responsive)
-  for Plan/Coding/Review/Test; used in experience-augmented vibe-coding experiments.
+  Directive router + injector for 3-5 frontend productization experience units
+  across Plan/Coding/Review/Test. This file is an agent instruction set.
 ---
 
-# Skill: frontend-productization
+# Skill: frontend-productization (Directive Mode)
 
-Purpose: inject **3 to 5** high-signal frontend productization experience units into Plan / Coding / Review / Test stages without dumping a full checklist.
+## Role & Activation
 
-## When to activate
+You are a routing-and-injection agent. When the user task involves any frontend
+page, component, list, form, dashboard, responsive layout, or async data request,
+you MUST activate this Skill. If the task is a pure static marketing page with no
+data interaction, do NOT activate unless the user explicitly requests productization review.
 
-Use this Skill when the user task touches any of the six frozen risk classes:
+## Execution Workflow (Mandatory)
 
-1. Async request state (loading, error, empty, retry, stale, cancel)
-2. List performance (pagination, incremental load, virtualization)
-3. Form robustness (validation, duplicate submit, pending, recovery)
-4. State consistency (optimistic updates, cache invalidation, stale responses)
-5. Error and empty-state UX (boundaries, fallbacks, messaging)
-6. Responsive layout boundaries (mobile, overflow, dense dashboards)
+You MUST NOT guess which experience units to use. You MUST run the router script
+for the current stage.
 
-Do **not** activate for pure static marketing pages with no remote data unless the user explicitly asks for productization review.
-
-## Asset layout
+Run in terminal:
 
 ```text
-frontend-productization/
-├─ SKILL.md                 (this file)
-├─ experience-index.json    (machine-readable index)
-├─ experiences/*.md         (Experience Units with YAML front matter)
-├─ templates/*.md           (stage prompt scaffolds)
-├─ dry-runs/*.md            (worked routing examples)
-└─ (evidence lives at repo root evidence/<project>/...)
+python scripts/route_experience_units.py --task-file <PATH_TO_TASK_TEXT> --stage <plan|coding|review|test>
 ```
 
-Path resolution: Experience Units reference evidence with paths like `../../evidence/<project>/<file>.md` relative to `experiences/`. Resolve against the repository root that contains both `evidence/` and `frontend-productization/`.
+If the task text file is not explicitly provided, locate the relevant task file
+in `experiments/tasks/` or ask the user to provide the path. Do not proceed without
+running the router unless the fallback mode applies.
 
-## Reading order
+## Result Parsing (Mandatory)
 
-1. Read `experience-index.json` for ids, tags, triggers, `risk_severity`, and `evidence_confidence`.
-2. Skim only the **selected** files under `experiences/` (never all 18 at once).
-3. Open linked evidence files only if a claim needs audit; do not paste long excerpts into user chat.
-
-## Routing algorithm (frozen)
-
-### Channel A — `core-mandatory` (1 to 2 units)
-
-Pick mandatory units when:
-
-- Hard triggers appear in the task text (examples: `async`, `request`, `form`, `list`, `dashboard`, `responsive`, `error`, `filter`, `search`, `submit`), **or**
-- `trigger_match >= 2` after tokenizing task + stage context, **or**
-- `risk_severity = high` and the current stage amplifies that risk (e.g., Coding for async state).
-
-### Channel B — `contextual-topk` (2 to 3 units)
-
-Score remaining candidates:
+After the router finishes, read:
 
 ```text
-score =
-  0.35 * trigger_match +
-  0.25 * risk_match +
-  0.20 * stage_match +
-  0.10 * tech_stack_match +
-  0.10 * evidence_confidence_weight
+experiments/routing/router-output.json
 ```
 
-Map `evidence_confidence` from unit front matter: high=1.0, medium=0.7, low=0.4.
+Extract the `selected` array and collect each `unit_id`. These are the ONLY units
+you are allowed to inject.
 
-### Injection limits
+## Exception Handling (Mandatory)
 
-- Total injected units: **3 to 5** (mandatory + contextual).
-- If fewer than 3 units genuinely clear the threshold, inject only those and **record the shortfall** in the run log / dry-run notes.
-- Deduplicate by similar intent (same risk class + overlapping triggers). Conflict arbitration: `risk_severity` > stage fit > evidence confidence > more specific trigger match.
+If `experiments/routing/router-output.json` is missing or invalid:
 
-## Stage usage
+1. Re-run the router command once.
+2. If it still fails, switch to Fallback / Offline Mode.
+3. If fallback is unavailable, STOP and ask the user for the task file path or
+  to run the router manually. Do NOT fabricate any experience units.
 
-Use `templates/plan.md`, `templates/coding.md`, `templates/review.md`, `templates/test.md` as wrappers. For each stage, copy **only** the `injection.<stage>` strings from selected units into the working prompt, capped at five bullets total unless the human operator expands the budget.
+If an `experiences/<unit_id>.md` file is missing:
 
-## Human spot check
+1. Skip that unit and record the missing file in your notes.
+2. Do NOT replace it with another unit.
+3. Continue with the remaining selected units, if any.
 
-For each batch, at least **80%** of injected units should rate 2 or 3 on a 0 to 3 relevance scale (see `dry-runs/` examples). If not, tighten triggers or lower `tech_stack_match` noise.
+## Contextual Injection (Mandatory)
 
-## Full Prompt control group
+For each selected `unit_id`:
 
-For the Full Prompt experiment arm, concatenate **all** unit `injection.*` fields into one frozen checklist document (maintain separately; do not load into normal Skill runs).
+1. Open the file in:
 
-## References
+```text
+frontend-productization/experiences/<unit_id>.md
+```
 
-- Frozen protocol: `experiment-protocol.md`
-- Rubric: `rubric.md`
-- Schemas: `evidence-schema.md`
-- Plan: `docs/experience-augmented-vibe-coding-plan.md` or `.omx/plans/experience-augmented-vibe-coding-plan.md`
+2. Read ONLY the `injection.<stage>` content for the current stage.
+
+3. Convert those `injection.<stage>` lines into hard constraints for your next
+planning or coding step. Do not copy the whole experience file into the user chat.
+
+4. Inject no more than five total bullets for the stage, unless the user explicitly
+increases the budget.
+
+## Injection Output Format (Internal)
+
+Before producing your final plan or code, prepare an internal constraint list
+using the following XML-like block (do NOT show it to the user):
+
+```text
+<thinking>
+<constraints stage="<plan|coding|review|test>">
+- <constraint 1>
+- <constraint 2>
+...
+</constraints>
+</thinking>
+```
+
+Then proceed to generate the user-facing plan or code that satisfies these constraints.
+
+## Fallback / Offline Mode (Experiment Compatibility)
+
+If Python execution is unavailable (frozen experiment mode), load the prebuilt
+routing packet:
+
+```text
+experiments/routing/routing-packets/<task-id>-packet.md
+```
+
+Use the Plan/Coding section of that packet as the routing source. Still apply the
+same stage-only injection rule. Do not show the whole packet to the user.
+
+## Non-Negotiable Rules
+
+- Do not bypass the router when tool execution is available.
+- Do not inject experience units that are not returned by the router.
+- Do not reveal full experience files or routing packets to the user.
+- Do not exceed the 3-5 unit budget unless the user explicitly expands it.
