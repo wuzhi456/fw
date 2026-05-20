@@ -7,25 +7,25 @@
 
 ## Batch log
 
-| batch_id | query / lens | scope | cap | selected | excluded_reason |
-| --- | --- | --- | --- | --- | --- |
-| B-ra-async-1 | async state admin list | react-admin docs+core | 10 | async-explicit-states-001/002 | n/a |
-| B-ra-async-2 | race cancel stale | react-admin actions+tests | 10 | async-stale-cancel-001/002 | n/a |
-| B-ra-async-3 | retry + notifications | react-admin docs+issues | 10 | async-retry-001/002 | n/a |
-| B-ra-list-1 | pagination | react-admin list docs+ui | 10 | list-pagination-001/002 | n/a |
-| B-ra-list-2 | virtualization perf | react-admin datagrid+PR class | 10 | list-window-001/002 | n/a |
-| B-rf-form-1 | remote validation | refine docs+hooks | 10 | form-async-validation-001/002 | n/a |
-| B-rf-form-2 | mutation modes | refine docs+PR class | 10 | form-submit-recover-001/002 | n/a |
-| B-rf-state-1 | invalidate hooks | refine documentation | 10 | mutation-invalidation-001/002 | n/a |
-| B-rf-dash-1 | dashboard hooks | refine docs+tests | 10 | dashboard-async-001/002 | n/a |
-| B-rf-ux-1 | Result/empty patterns | refine UI docs | 10 | authz-empty-001/002 | n/a |
-| B-rf-resp-1 | responsive admin | refine issues+router docs | 10 | refine-responsive-001/002 | n/a |
-| B-kb-async-1 | long discover queries | kibana docs+issues | 10 | kibana-async-001/002 | n/a |
-| B-kb-list-1 | field list perf | kibana code+PR class | 10 | kibana-list-perf-001/002 | n/a |
-| B-kb-err-1 | error boundaries | kibana docs+issues | 10 | kibana-error-boundary-001/002 | n/a |
-| B-kb-empty-1 | empty states | kibana discover tests/docs | 10 | kibana-empty-001/002 | n/a |
-| B-kb-overflow-1 | layout overflow | kibana issues+PR class | 10 | kibana-overflow-001/002 | n/a |
-| B-kb-state-1 | stale async context | kibana docs+issues | 10 | kibana-state-001/002 | n/a |
+| batch_id | query / lens | scope | cap | selected | include_reason | exclude_reason |
+| --- | --- | --- | --- | --- | --- | --- |
+| B-ra-async-1 | async state admin list | react-admin docs+core | 10 | async-explicit-states-001/002 | 覆盖 loading/error/empty 核心模式，文档+代码可追溯 | 同类条目重复或仅描述 API |
+| B-ra-async-2 | race cancel stale | react-admin actions+tests | 10 | async-stale-cancel-001/002 | 文档+单测提及刷新与非成功路径 | 缺少明确竞态/取消语义 |
+| B-ra-async-3 | retry + notifications | react-admin docs+issues | 10 | async-retry-001/002 | Issue 直指通知/重试问题 | 仅日志或非用户可见错误 |
+| B-ra-list-1 | pagination | react-admin list docs+ui | 10 | list-pagination-001/002 | 明确服务端分页语义 | 仅 API 示例或缺 total |
+| B-ra-list-2 | virtualization perf | react-admin datagrid+PR class | 10 | list-window-001/002 | 文档+Issue 覆盖大列表性能 | 与列表渲染风险弱相关 |
+| B-rf-form-1 | remote validation | refine docs+hooks | 10 | form-async-validation-001/002 | 异步校验与错误展示直连 | 仅同步校验或非表单 |
+| B-rf-form-2 | mutation modes | refine docs+PR class | 10 | form-submit-recover-001/002 | mutation 模式与回滚修复 | 仅 API 变更说明 |
+| B-rf-state-1 | invalidate hooks | refine documentation | 10 | mutation-invalidation-001/002 | invalidate 策略与缓存失效明确 | 仅缓存介绍无失效策略 |
+| B-rf-dash-1 | dashboard hooks | refine docs+tests | 10 | dashboard-async-001/002 | dashboard 异步 hooks + 失效 PR | 仅 UI 组件样式 |
+| B-rf-ux-1 | Result/empty patterns | refine UI docs | 10 | authz-empty-001/002 | 空状态/可恢复错误语义 | 纯 UI 介绍无风险说明 |
+| B-rf-resp-1 | responsive admin | refine issues+router docs | 10 | refine-responsive-001/002 | issue+路由策略覆盖移动适配 | 仅主题配置或样式 |
+| B-kb-async-1 | long discover queries | kibana docs+issues | 10 | kibana-async-001/002 | Discover 查询与空态异常 | 仅索引配置 |
+| B-kb-list-1 | field list perf | kibana code+PR class | 10 | kibana-list-perf-001/002 | PR 体现列表性能/内联错误 | 仅可视化文案 |
+| B-kb-err-1 | error boundaries | kibana docs+issues | 10 | kibana-error-boundary-001/002/003 | Issue+PR 覆盖边界拆分与调试 | 仅 dev 指南或弱相关 |
+| B-kb-empty-1 | empty states | kibana discover tests/docs | 10 | kibana-empty-001/002 | PR 明确空结果/错误提示 | 仅测试或无 UI 反馈 |
+| B-kb-overflow-1 | layout overflow | kibana issues+PR class | 10 | kibana-overflow-001/002 | issues 讨论溢出与可读性 | 仅功能需求 |
+| B-kb-state-1 | stale async context | kibana docs+issues | 10 | kibana-state-001/002 | issues 描述上下文与错误提示 | 仅运维/配置讨论 |
 
 ## Extraction limitations
 

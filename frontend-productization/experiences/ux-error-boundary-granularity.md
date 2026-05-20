@@ -31,9 +31,9 @@ verification:
   - "局部失败时其他区域可操作"
   - "用户看到可行动恢复选项"
 evidence:
-  - "../../evidence/kibana/kibana-error-boundary-001.md"
   - "../../evidence/kibana/kibana-error-boundary-002.md"
-confidence: low
+  - "../../evidence/kibana/kibana-error-boundary-003.md"
+confidence: medium
 ---
 
 ## 经验解释
