@@ -40,3 +40,12 @@
 | C-034 | responsive | dashboard grid | 容器挤压/断裂 | merge | - |
 | C-035 | responsive | 卡片独立加载 | 单卡失败拖累 | merge | - |
 | C-036 | responsive | KPI 信息密度 | 关键指标被挤掉 | merge | - |
+
+## GitLab frontend backup（2026-05-22，`B-gl-*`）
+
+| 候选 | GitLab 证据 | 裁决 |
+| --- | --- | --- |
+| C-013/C-014 | `evidence/gitlab/gitlab-form-dup-guard-001/002` | merge→`form-duplicate-submit-guard`（EU 已增第三/四证） |
+| C-025/C-026 | `evidence/gitlab/gitlab-ux-error-boundary-001/002` | merge→`ux-error-boundary-granularity`（换证补强） |
+| C-030 | `evidence/gitlab/gitlab-ux-recoverable-errors-001/002` | merge→`ux-fallback-recoverable-errors`（replace refine） |
+| C-008/C-012 | `evidence/gitlab/gitlab-list-pagination-001/002` | merge（仅备份，未改 EU 主路径） |

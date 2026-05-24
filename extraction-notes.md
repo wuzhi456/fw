@@ -26,11 +26,14 @@
 | B-kb-empty-1 | empty states | kibana discover tests/docs | 10 | kibana-empty-001/002 | PR 明确空结果/错误提示 | 仅测试或无 UI 反馈 |
 | B-kb-overflow-1 | layout overflow | kibana issues+PR class | 10 | kibana-overflow-001/002 | issues 讨论溢出与可读性 | 仅功能需求 |
 | B-kb-state-1 | stale async context | kibana docs+issues | 10 | kibana-state-001/002 | issues 描述上下文与错误提示 | 仅运维/配置讨论 |
+| B-gl-ux-1 | error alerts + ErrorBoundary epic | gitlab issues+epic | 10 | gitlab-ux-recoverable-errors-001/002, gitlab-ux-error-boundary-001/002 | #381151 与 epic/6359 可核验；RFC#94 作 partial 补证 | 纯后端 500、与前端反馈无关的 issue |
+| B-gl-form-1 | MR submit loading / dup click | gitlab MR+code | 10 | gitlab-form-dup-guard-001/002 | !232653 merged + issuable_form.js 钉选 SHA | 服务端重复 merge（#276919）无前端 pending 语义 |
+| B-gl-list-1 | GLQL load more / infinite scroll | gitlab issue+MR | 10 | gitlab-list-pagination-001/002 | 用户可见分页/滚载失败 | GitHub import 后端分页（#548950） |
 
 ## Extraction limitations
 
 - Verifier 已于 2026-05-12 将 P1 evidence 中占位 Issue/PR 号替换为 GitHub 可打开的真实编号（见 `docs/verification-spotcheck-2026-05-12.md` 附录）；后续若 claim 与编号语义漂移，应更新摘要而非改回占位符。
-- GitLab frontend was excluded per `sample-selection.md`; no GitLab evidence batches in MVP.
+- GitLab frontend 在 MVP 主样本中仍为备份（`sample-selection.md`）；2026-05-22 批次 `B-gl-*` 为 Week 1 watchlist 换证与 list 备份证据，immutable_ref 钉选 `4893c18f7ac74048afa35976b65261cd8c8e46b0`（`git ls-remote`）。
 
 ## Handoff to P2
 

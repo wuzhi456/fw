@@ -1,1 +1,3 @@
+# Generated project trees from experiment runs are large and reproducible.
+# Keep run metadata/review JSON in Git, but do not upload generated code.
 **/output/

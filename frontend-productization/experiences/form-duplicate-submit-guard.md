@@ -34,7 +34,9 @@ verification:
 evidence:
   - "../../evidence/react-admin/form-dup-guard-001.md"
   - "../../evidence/react-admin/form-dup-guard-002.md"
-confidence: medium
+  - "../../evidence/gitlab/gitlab-form-dup-guard-001.md"
+  - "../../evidence/gitlab/gitlab-form-dup-guard-002.md"
+confidence: high
 ---
 
 ## 经验解释

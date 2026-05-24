@@ -166,10 +166,12 @@
         "review": 1,
         "test": 1
       },
-      "evidence_confidence": "medium",
+      "evidence_confidence": "high",
       "evidence_paths": [
         "../../evidence/react-admin/form-dup-guard-001.md",
-        "../../evidence/react-admin/form-dup-guard-002.md"
+        "../../evidence/react-admin/form-dup-guard-002.md",
+        "../../evidence/gitlab/gitlab-form-dup-guard-001.md",
+        "../../evidence/gitlab/gitlab-form-dup-guard-002.md"
       ]
     },
     {
@@ -309,10 +311,11 @@
         "review": 1,
         "test": 1
       },
-      "evidence_confidence": "medium",
+      "evidence_confidence": "high",
       "evidence_paths": [
-        "../../evidence/kibana/kibana-error-boundary-002.md",
-        "../../evidence/kibana/kibana-error-boundary-003.md"
+        "../../evidence/kibana/kibana-error-boundary-003.md",
+        "../../evidence/gitlab/gitlab-ux-error-boundary-001.md",
+        "../../evidence/gitlab/gitlab-ux-error-boundary-002.md"
       ]
     },
     {
@@ -355,10 +358,10 @@
         "review": 1,
         "test": 1
       },
-      "evidence_confidence": "low",
+      "evidence_confidence": "medium",
       "evidence_paths": [
-        "../../evidence/refine/authz-empty-001.md",
-        "../../evidence/refine/authz-empty-002.md"
+        "../../evidence/gitlab/gitlab-ux-recoverable-errors-001.md",
+        "../../evidence/gitlab/gitlab-ux-recoverable-errors-002.md"
       ]
     },
     {

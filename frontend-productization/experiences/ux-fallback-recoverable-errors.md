@@ -31,9 +31,9 @@ verification:
   - "次要错误不阻塞主任务"
   - "关键错误仍可获得足够注意"
 evidence:
-  - "../../evidence/refine/authz-empty-001.md"
-  - "../../evidence/refine/authz-empty-002.md"
-confidence: low
+  - "../../evidence/gitlab/gitlab-ux-recoverable-errors-001.md"
+  - "../../evidence/gitlab/gitlab-ux-recoverable-errors-002.md"
+confidence: medium
 ---
 
 ## 经验解释
