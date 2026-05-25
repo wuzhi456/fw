@@ -2,19 +2,19 @@
 source_project: kibana
 repo_url: https://github.com/elastic/kibana
 immutable_ref: fb1270aacdc6b660c792319e5221a0fa9f2804c0
-artifact_type: pull_request
-path_or_issue_pr: "#106163"
-artifact_url: "https://github.com/elastic/kibana/pull/106163"
-artifact_title: "[Lens] Add render complete tags to empty states"
+artifact_type: issue
+path_or_issue_pr: "#134306"
+artifact_url: https://github.com/elastic/kibana/issues/134306
+artifact_title: Lazy field list loading
 verification_status: verified
-claim_support: partial
-excerpt_or_summary: "为空结果 Lens 面板补齐与有数据时一致的完成标记，便于调度与测试感知。"
-mapped_experience_claim: "无数据时仍需可被调度感知「已完成渲染」，避免大仪表盘假阴性。"
-retrieval_time: 2026-05-12T20:00:00Z
-confidence: medium
+claim_support: strong
+excerpt_or_summary: Discover/Lens 字段列表一次性加载全量 field caps 导致慢/大响应；issue 提出滚动时分页加载、前缀搜索与错误降级，避免 UI 被单次 fetch 拖死。
+mapped_experience_claim: 无限滚动/字段列表增量加载需分页预取与背压：仅加载视口附近页，慢响应时保持 UI 可用而非阻塞全列表。
+retrieval_time: 2026-05-25T10:00:00Z
+confidence: high
+verification_notes: Gate B 2026-05-25 HTTP 200；换证自 PR #106163（empty state tags 与 incremental prefetch failure mode 不对齐）。
 ---
+
 ## Note
 
-本记录在 `scripts/apply_evidence_audit.py` 中由 **evidence-audit** 批次生成：已用浏览器/GitHub 页面核验可打开性，剔除 bot-only flaky 条目并替换 404 路径。文档类证据的 `immutable_ref` 已钉选具体 commit SHA（与 `docs/evidence-audit-result.json` 同源）。
-
-**核验状态取值**：`verified`（Issue/PR 可打开且作者非 release bot）、`verified_path`（blob/tree 可打开）、`replaced`（已换证）、`downgraded`（支撑弱已降置信）。
+#134306 直接描述 field list 全量 upfront load 的产品化风险，并给出 scroll 分页、prefix load、graceful error 等 mature practice。与 `list-incremental-prefetch` 同一 failure mode。

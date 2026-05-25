@@ -3,19 +3,18 @@ source_project: react-admin
 repo_url: https://github.com/marmelab/react-admin
 immutable_ref: fe80bf37758da3b1d0c35a456416a1c169399d99
 artifact_type: docs
-path_or_issue_pr: "docs/Admin.md"
-artifact_url: "https://github.com/marmelab/react-admin/blob/fe80bf37758da3b1d0c35a456416a1c169399d99/docs/Admin.md"
-artifact_title: "Admin component documentation"
+path_or_issue_pr: docs/Admin.md
+artifact_url: https://github.com/marmelab/react-admin/blob/fe80bf37758da3b1d0c35a456416a1c169399d99/docs/Admin.md
+artifact_title: Admin queryClient — default query retry and error notification
 verification_status: verified_path
 claim_support: partial
-excerpt_or_summary: "Admin 文档描述通知、布局与资源级错误反馈的常规模式。"
-mapped_experience_claim: "将技术错误与可读文案及可选重试动作配对呈现。"
-retrieval_time: 2026-05-12T20:00:00Z
+excerpt_or_summary: Admin 文档说明失败 query 默认静默重试 3 次（指数退避），仍失败才向 UI 展示 error notification；可通过 queryClient 配置 retry。
+mapped_experience_claim: 可重试错误应区分自动退避重试与最终失败态，并配置 retry 上限避免重试风暴。
+retrieval_time: 2026-05-25T10:00:00Z
 confidence: medium
-verification_notes: "文档级支撑，弱于具体 Issue 对 retry 的针对性。"
+verification_notes: Gate B 2026-05-25 blob 200；queryClient 章节与 C-005 重试风暴风险对齐。
 ---
+
 ## Note
 
-本记录在 `scripts/apply_evidence_audit.py` 中由 **evidence-audit** 批次生成：已用浏览器/GitHub 页面核验可打开性，剔除 bot-only flaky 条目并替换 404 路径。文档类证据的 `immutable_ref` 已钉选具体 commit SHA（与 `docs/evidence-audit-result.json` 同源）。
-
-**核验状态取值**：`verified`（Issue/PR 可打开且作者非 release bot）、`verified_path`（blob/tree 可打开）、`replaced`（已换证）、`downgraded`（支撑弱已降置信）。
+文档 `queryClient` 节描述 React Query 默认 retry 与自定义 `retry: false` / 次数上限。与 001（notify 链路缺失）互补：成熟产品同时约定重试策略与最终用户可见失败。

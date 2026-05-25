@@ -7,14 +7,13 @@ path_or_issue_pr: "#6323"
 artifact_url: "https://github.com/refinedev/refine/issues/6323"
 artifact_title: "[BUG] Menu Button and Heading Overlap in Mobile Preview."
 verification_status: verified
-claim_support: partial
+claim_support: strong
 excerpt_or_summary: "移动预览中菜单按钮与标题重叠的实际缺陷报告。"
-mapped_experience_claim: "管理端窄屏须验证侧栏/标题层叠与触控热区。"
+mapped_experience_claim: "窄屏下侧栏/汉堡菜单与页标题层叠，导致导航不可点或误触。"
 retrieval_time: 2026-05-12T20:00:00Z
-confidence: medium
+confidence: high
+verification_notes: "Gate B 2026-05-25：issue HTTP 200；用户可见 overlap failure mode 与 mobile-navigation-density 一致；E2 strong+high。"
 ---
 ## Note
 
-本记录在 `scripts/apply_evidence_audit.py` 中由 **evidence-audit** 批次生成：已用浏览器/GitHub 页面核验可打开性，剔除 bot-only flaky 条目并替换 404 路径。文档类证据的 `immutable_ref` 已钉选具体 commit SHA（与 `docs/evidence-audit-result.json` 同源）。
-
-**核验状态取值**：`verified`（Issue/PR 可打开且作者非 release bot）、`verified_path`（blob/tree 可打开）、`replaced`（已换证）、`downgraded`（支撑弱已降置信）。
+Issue #6323 直接报告移动预览中菜单按钮与 Heading 重叠，属于可复现的响应式导航密度/层叠失败，支撑 `responsive-mobile-navigation-density`。Gate B 2026-05-25 重验 URL 可打开。

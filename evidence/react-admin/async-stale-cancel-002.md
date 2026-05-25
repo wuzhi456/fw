@@ -1,21 +1,20 @@
 ---
 source_project: react-admin
 repo_url: https://github.com/marmelab/react-admin
-immutable_ref: fe80bf37758da3b1d0c35a456416a1c169399d99
-artifact_type: test
-path_or_issue_pr: "packages/ra-core/src/controller/list/useListController.spec.tsx"
-artifact_url: "https://github.com/marmelab/react-admin/blob/fe80bf37758da3b1d0c35a456416a1c169399d99/packages/ra-core/src/controller/list/useListController.spec.tsx"
-artifact_title: "useListController unit tests"
-verification_status: verified_path
-claim_support: partial
-excerpt_or_summary: "列表控制器单测覆盖空结果等边界，提示测试应对非成功路径断言。"
-mapped_experience_claim: "自动化测试应覆盖空结果与错误分支，而非仅断言有数据列表。"
-retrieval_time: 2026-05-12T20:00:00Z
-confidence: medium
-verification_notes: "路径自 useGetList.spec 更正；与竞态主题弱相关。"
+immutable_ref: 6c865bc
+artifact_type: pull_request
+path_or_issue_pr: "#4718"
+artifact_url: https://github.com/marmelab/react-admin/pull/4718
+artifact_title: Fix List Race Condition on Loading Pages Quickly
+verification_status: verified
+claim_support: strong
+excerpt_or_summary: 合并 PR 修复 List 快速翻页竞态（Fixes #4658），框架层序列化/忽略乱序 getList 结果。
+mapped_experience_claim: 列表控制器应在实现层处理请求竞态，而非依赖用户禁用分页或接受 UI 回跳。
+retrieval_time: 2026-05-25T10:00:00Z
+confidence: high
+verification_notes: Gate B 2026-05-25 PR 200；immutable_ref 钉选 merge commit 6c865bc；换证原 useListController.spec（claim 偏空结果测试）。
 ---
+
 ## Note
 
-本记录在 `scripts/apply_evidence_audit.py` 中由 **evidence-audit** 批次生成：已用浏览器/GitHub 页面核验可打开性，剔除 bot-only flaky 条目并替换 404 路径。文档类证据的 `immutable_ref` 已钉选具体 commit SHA（与 `docs/evidence-audit-result.json` 同源）。
-
-**核验状态取值**：`verified`（Issue/PR 可打开且作者非 release bot）、`verified_path`（blob/tree 可打开）、`replaced`（已换证）、`downgraded`（支撑弱已降置信）。
+PR 标题与 Fixes #4658 直接对应竞态修复。与 001 同一 failure mode，构成 issue（用户可见 bug）+ fix（成熟实践）双证。

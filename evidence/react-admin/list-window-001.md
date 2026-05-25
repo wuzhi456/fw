@@ -3,18 +3,18 @@ source_project: react-admin
 repo_url: https://github.com/marmelab/react-admin
 immutable_ref: fe80bf37758da3b1d0c35a456416a1c169399d99
 artifact_type: docs
-path_or_issue_pr: "docs/Datagrid.md"
-artifact_url: "https://github.com/marmelab/react-admin/blob/fe80bf37758da3b1d0c35a456416a1c169399d99/docs/Datagrid.md"
-artifact_title: "Datagrid documentation"
+path_or_issue_pr: docs/Datagrid.md
+artifact_url: https://github.com/marmelab/react-admin/blob/fe80bf37758da3b1d0c35a456416a1c169399d99/docs/Datagrid.md
+artifact_title: Datagrid documentation (performance / optimized)
 verification_status: verified_path
 claim_support: partial
-excerpt_or_summary: "Datagrid 文档讨论列、性能与大数据场景注意点。"
-mapped_experience_claim: "宽/高表应约束列并考虑虚拟化等模式。"
-retrieval_time: 2026-05-12T20:00:00Z
+excerpt_or_summary: Datagrid 文档说明大数据场景应约束列数，并提及 optimized 等性能选项，暗示不宜默认全量 DOM 渲染。
+mapped_experience_claim: 超长列表在渲染层需要窗口化/虚拟化或 optimized 模式，否则行×列 DOM 规模导致滚动卡顿。
+retrieval_time: 2026-05-25T10:00:00Z
 confidence: medium
+verification_notes: Gate B 2026-05-25 HTTP 200；文档 partial 支撑虚拟化/性能 failure mode。
 ---
+
 ## Note
 
-本记录在 `scripts/apply_evidence_audit.py` 中由 **evidence-audit** 批次生成：已用浏览器/GitHub 页面核验可打开性，剔除 bot-only flaky 条目并替换 404 路径。文档类证据的 `immutable_ref` 已钉选具体 commit SHA（与 `docs/evidence-audit-result.json` 同源）。
-
-**核验状态取值**：`verified`（Issue/PR 可打开且作者非 release bot）、`verified_path`（blob/tree 可打开）、`replaced`（已换证）、`downgraded`（支撑弱已降置信）。
+`docs/Datagrid.md` 的性能章节与 #8075 用户报告互补：文档给出预防性约束，issue 给出用户可见 freeze failure mode。

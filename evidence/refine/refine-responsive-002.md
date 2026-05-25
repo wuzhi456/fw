@@ -9,13 +9,11 @@ artifact_title: "Router provider documentation"
 verification_status: verified_path
 claim_support: partial
 excerpt_or_summary: "路由与布局集成文档，说明响应式场景下导航与页面结构配合。"
-mapped_experience_claim: "小屏折叠导航并调整信息密度。"
+mapped_experience_claim: "路由与布局集成须在计划中定义小屏折叠导航与可达性断点。"
 retrieval_time: 2026-05-12T20:00:00Z
 confidence: medium
-verification_notes: "替换 404 的 packages/documentation/router.md。"
+verification_notes: "Gate B 2026-05-25：router-provider docs HTTP 200；partial+medium 与 #6323 strong 配对晋升 mobile-navigation-density。"
 ---
 ## Note
 
-本记录在 `scripts/apply_evidence_audit.py` 中由 **evidence-audit** 批次生成：已用浏览器/GitHub 页面核验可打开性，剔除 bot-only flaky 条目并替换 404 路径。文档类证据的 `immutable_ref` 已钉选具体 commit SHA（与 `docs/evidence-audit-result.json` 同源）。
-
-**核验状态取值**：`verified`（Issue/PR 可打开且作者非 release bot）、`verified_path`（blob/tree 可打开）、`replaced`（已换证）、`downgraded`（支撑弱已降置信）。
+Router provider 文档说明布局与路由在管理端中的集成方式，为窄屏切换抽屉/折叠菜单提供实现锚点；与 #6323 用户可见缺陷互补。Gate B 2026-05-25 重验 blob 可打开。
