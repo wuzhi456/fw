@@ -28,7 +28,7 @@ python scripts/route_experience_units.py --task-file <PATH_TO_TASK_TEXT> --stage
 
 3. 结果解析 (Result Parsing)
 
-- 指令要求：读取生成的 experiments/routing/router-output.json，提取 selected 数组中的 unit_id。
+- 指令要求：读取生成的 router-output-<task_id>.json（或语义版 router-output-<task_id>-semantic.json），提取 selected 数组中的 unit_id。
 
 - 硬性约束：Agent 只能注入被脚本选中的这几条经验，绝不可越界。
 
@@ -44,7 +44,7 @@ python scripts/route_experience_units.py --task-file <PATH_TO_TASK_TEXT> --stage
 
 - 核心法则：只允许读取当前开发阶段（如 injection.coding）的文本。
 
-- 数量限制：总注入条目动态预算（>=1），默认不超过 8 条，除非用户显式扩容。
+- 数量限制：总注入条目动态预算（>=2），默认不超过 8 条，除非用户显式扩容。
 
 6. 内部思维链约束输出 (Injection Output Format)
 
@@ -118,21 +118,41 @@ B 任务（路由与经验提取验证）已圆满闭环，项目可正式进入
 
 1. 路由器 v2 完成（确定性 + 动态预算 + 否定抑制 + 规则依赖）
 - 脚本：scripts/route_experience_units.py
-- 变化要点：基础保底预算 BASE_BUDGET=1，避免任务预算为 0。
+- 变化要点：基础保底预算 BASE_BUDGET=2，避免任务预算为 0。
 
 2. 语义路由完成离线化（Dense Index 本地化）
 - 新增脚本：scripts/build_dense_index.py
 - 离线产物：frontend-productization/dense-index.json
 - 语义路由读取本地索引，不再依赖运行时模型下载。
+- 语义阈值：dense_min_score=0.25（控制过度选择，保留盲盒召回）。
 
 3. 批量路由辅助脚本完成
 - 脚本：scripts/run_all_routers.py
 - 解决输出覆盖问题，按 task_id 写入独立文件。
 
 4. 路由评估闭环补强（进行中）
-- 目标产出：experiments/routing/routing-metrics-v2.csv
+- 标签文件：experiments/routing/relevance-labels.csv（包含 task-ecommerce-checkout 的 18 条标注）
+- 评估脚本：scripts/evaluate_routing_metrics.py
+- 评估产物：experiments/routing/routing-metrics-v2.csv
 - 对比维度：deterministic vs semantic
 
 5. 盲盒任务补救（进行中）
 - 目标：task-ecommerce-checkout 必须召回至少 1 条 EU
 - 输出：semantic-vs-deterministic-report.md
+
+
+---
+五、使用说明与文件清单（简要）
+
+1. 运行流程
+- 生成离线向量：python scripts/build_dense_index.py
+- 批量路由：python scripts/run_all_routers.py --stage plan
+- 指标计算：python scripts/evaluate_routing_metrics.py --router-dir experiments/routing/outputs-deterministic --output experiments/routing/routing-metrics-deterministic.csv
+- 语义指标：python scripts/evaluate_routing_metrics.py --router-dir experiments/routing/outputs-semantic --output experiments/routing/routing-metrics-semantic.csv
+
+2. 关键文件
+- frontend-productization/experience-index.json：EU 定义与证据路径
+- frontend-productization/dense-index.json：离线向量索引
+- experiments/routing/relevance-labels.csv：任务-经验真值标签
+- experiments/routing/routing-metrics-v2.csv：最终指标汇总
+- experiments/routing/semantic-vs-deterministic-report.md：盲盒对比说明
