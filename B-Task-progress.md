@@ -44,7 +44,7 @@ python scripts/route_experience_units.py --task-file <PATH_TO_TASK_TEXT> --stage
 
 - 核心法则：只允许读取当前开发阶段（如 injection.coding）的文本。
 
-- 数量限制：总注入条目不得超过 5 条。
+- 数量限制：总注入条目动态预算（>=1），默认不超过 8 条，除非用户显式扩容。
 
 6. 内部思维链约束输出 (Injection Output Format)
 
@@ -101,3 +101,38 @@ python scripts/route_experience_units.py --task-file <PATH_TO_TASK_TEXT> --stage
 当前的 frontend-productization 机制已经超越了简单的文本清单，演变成了一个具备高鲁棒性、高可解释性且符合 Agentic Workflow（智能体工作流）工业级标准的动态注入系统。
 
 B 任务（路由与经验提取验证）已圆满闭环，项目可正式进入 C 任务阶段，开启端到端的大模型代码生成（Execution Benchmark）与最终盲评（Blind Review）。
+
+
+目前的项目框架，一个A Skill 负责从 github仓库中提取经验；B Skill 负责对一个给定的任务进行路由，在经验库中寻找合适的经验，避免 Agent 在 Plan 和 Coding 阶段出现隐性错误或者bug问题
+
+
+
+1. 经验的条数需要进行判定，首先判断任务的规模，如果是大工程，经验的条目可以更多
+2. 规则刚性极强，无人工灵活微调空间，适配个性化开发场景能力弱；可能需要包含利用 Agent 自行选择
+3. 可能需要参考 RAG 的流程，使用索引和 frontend-productization\experience-index.json 中的tag 进行优化，可以尝试进行向量化匹配，而不是只是使用静态的相关词正则化匹配
+4. 使用更多的 Task 进行测试，类似于根据部分（3-5个经验，尽量不涉及其他经验）经验单元，之后得到对应的primary endpoint(`precision@5`), secondary endpoints(`hit@5`) （目前已经有了合理的准确率、召回率的比较流程）
+
+
+---
+四、2026-05-26 紧急修复与进度更新
+
+1. 路由器 v2 完成（确定性 + 动态预算 + 否定抑制 + 规则依赖）
+- 脚本：scripts/route_experience_units.py
+- 变化要点：基础保底预算 BASE_BUDGET=1，避免任务预算为 0。
+
+2. 语义路由完成离线化（Dense Index 本地化）
+- 新增脚本：scripts/build_dense_index.py
+- 离线产物：frontend-productization/dense-index.json
+- 语义路由读取本地索引，不再依赖运行时模型下载。
+
+3. 批量路由辅助脚本完成
+- 脚本：scripts/run_all_routers.py
+- 解决输出覆盖问题，按 task_id 写入独立文件。
+
+4. 路由评估闭环补强（进行中）
+- 目标产出：experiments/routing/routing-metrics-v2.csv
+- 对比维度：deterministic vs semantic
+
+5. 盲盒任务补救（进行中）
+- 目标：task-ecommerce-checkout 必须召回至少 1 条 EU
+- 输出：semantic-vs-deterministic-report.md

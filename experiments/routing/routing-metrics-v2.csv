@@ -1,0 +1,9 @@
+router,task_id,stage,precision_at_5,recall,must_hit,must_total,selected_count,run_file
+deterministic,task-async-form,plan,1.000,0.667,2,3,4,router-output-task-async-form.json
+deterministic,task-ecommerce-checkout,plan,0.000,0.000,0,0,0,router-output-task-ecommerce-checkout.json
+deterministic,task-list-page,plan,0.750,0.667,2,3,4,router-output-task-list-page.json
+deterministic,task-responsive-dashboard,plan,0.333,0.500,1,2,3,router-output-task-responsive-dashboard.json
+semantic,task-async-form,plan,0.750,1.000,3,3,4,router-output-task-async-form-semantic.json
+semantic,task-ecommerce-checkout,plan,0.000,0.000,0,0,2,router-output-task-ecommerce-checkout-semantic.json
+semantic,task-list-page,plan,0.500,0.667,2,3,4,router-output-task-list-page-semantic.json
+semantic,task-responsive-dashboard,plan,0.333,0.500,1,2,3,router-output-task-responsive-dashboard-semantic.json

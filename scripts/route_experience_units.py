@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import re
 from dataclasses import dataclass
 from typing import Dict, List, Set, Tuple
 
@@ -31,6 +32,7 @@ class RouteResult:
     confidence_weight: float
     risk_severity: str
     matched_cues: List[str]
+    matched_terms: List[str]
     failure_mode: str
 
 
@@ -42,139 +44,89 @@ def _normalize_text(text: str) -> str:
     return " ".join(text.lower().split())
 
 
-def _extract_cues(text: str) -> Tuple[Set[str], Set[str], Dict[str, List[str]]]:
-    cue_definitions = {
-        "async": [
-            "async",
-            "asynchronous",
-            "request",
-            "remote api",
-            "api",
-            "server",
-            "backend",
-            "network",
-            "fetch",
-            "load",
-            "loading",
-            "retry",
-            "sync",
-            "synchronize",
-            "refresh",
-        ],
-        "form": [
-            "form",
-            "submit",
-            "validation",
-            "field",
-            "input",
-            "checkout",
-            "payment",
-            "billing",
-            "address",
-            "login",
-            "signup",
-            "register",
-            "profile",
-            "edit",
-            "create",
-            "update",
-            "upload",
-            "apply",
-            "promo code",
-            "coupon",
-            "verify",
-        ],
-        "list": [
-            "list",
-            "table",
-            "rows",
-            "filter",
-            "search",
-            "pagination",
-            "catalog",
-            "grid",
-            "cards",
-            "gallery",
-            "results",
-            "items",
-            "summary",
-        ],
-        "state": [
-            "cache",
-            "stale",
-            "race",
-            "optimistic",
-            "invalidate",
-            "consistency",
-            "rollback",
-        ],
-        "ux": [
-            "empty",
-            "error",
-            "fallback",
-            "toast",
-            "boundary",
-            "disabled",
-            "pending",
-            "success",
-            "failure",
-        ],
-        "responsive": [
-            "responsive",
-            "mobile",
-            "tablet",
-            "laptop",
-            "dashboard",
-            "grid",
-            "layout",
-            "compact",
-            "dense",
-            "overflow",
-        ],
+def _tokenize_words(text: str) -> List[str]:
+    return re.findall(r"[a-z0-9]+", text.lower())
+
+
+def _negation_mask(words: List[str]) -> List[bool]:
+    negators = {
+        "no",
+        "not",
+        "never",
+        "without",
+        "avoid",
+        "disable",
+        "disabled",
+        "skip",
+        "omit",
+        "exclude",
+        "dont",
     }
+    mask = [False] * len(words)
+    for idx, word in enumerate(words):
+        if word in negators:
+            for next_idx in range(idx + 1, min(idx + 5, len(words))):
+                mask[next_idx] = True
+    return mask
 
-    async_hard_cues = {
-        "async",
-        "asynchronous",
-        "request",
-        "remote api",
-        "api",
-        "server",
-        "backend",
-        "network",
-        "fetch",
-        "load",
-        "loading",
-        "retry",
-    }
 
-    cue_tokens = set()
-    risk_classes = set()
-    matched = {}
+def _phrase_words(phrase: str) -> List[str]:
+    return re.findall(r"[a-z0-9]+", phrase.lower())
 
-    for label, patterns in cue_definitions.items():
-        hits = [pattern for pattern in patterns if pattern in text]
-        if hits:
-            cue_tokens.add(label)
-            matched[label] = hits
-            if label != "async":
-                risk_classes.add(label)
 
-    async_hits = set(matched.get("async", []))
-    if async_hits.intersection(async_hard_cues):
-        risk_classes.add("async")
+def _phrase_matches(words: List[str], phrase_words: List[str]) -> List[int]:
+    if not phrase_words or len(phrase_words) > len(words):
+        return []
+    matches = []
+    for idx in range(0, len(words) - len(phrase_words) + 1):
+        if words[idx : idx + len(phrase_words)] == phrase_words:
+            matches.append(idx)
+    return matches
 
-    expanded_tokens = set(cue_tokens)
-    if "search" in text or "filter" in text:
-        expanded_tokens.update({"list", "search", "filter"})
-    if "dashboard" in text:
-        expanded_tokens.update({"dashboard", "responsive"})
-    if "submit" in text or "validation" in text:
-        expanded_tokens.update({"form", "mutation"})
-    if any(token in text for token in async_hard_cues):
-        expanded_tokens.update({"async", "request"})
 
-    return expanded_tokens, risk_classes, matched
+def _extract_cues(text: str, units: List[Dict]) -> Tuple[Set[str], Set[str], Dict[str, List[str]], Set[str]]:
+    words = _tokenize_words(text)
+    negation_mask = _negation_mask(words)
+
+    cue_tokens: Set[str] = set()
+    risk_classes: Set[str] = set()
+    matched: Dict[str, List[str]] = {}
+    suppressed: Set[str] = set()
+
+    for unit in units:
+        unit_id = unit.get("id", "")
+        tags = unit.get("tags", [])
+        triggers = unit.get("triggers", [])
+        unit_matches: List[str] = []
+
+        for tag in tags:
+            tag_words = _phrase_words(tag)
+            matches = _phrase_matches(words, tag_words)
+            if not matches:
+                continue
+            if any(negation_mask[idx] for idx in matches):
+                suppressed.add(tag)
+                continue
+            unit_matches.append(f"tag:{tag}")
+            cue_tokens.add(tag)
+
+        for trigger in triggers:
+            trigger_words = _phrase_words(trigger)
+            matches = _phrase_matches(words, trigger_words)
+            if not matches:
+                continue
+            if any(negation_mask[idx] for idx in matches):
+                suppressed.add(trigger)
+                continue
+            unit_matches.append(f"trigger:{trigger}")
+
+        if unit_matches:
+            matched[unit_id] = unit_matches
+            unit_risk = _primary_risk_class(unit)
+            if unit_risk:
+                risk_classes.add(unit_risk)
+
+    return cue_tokens, risk_classes, matched, suppressed
 
 
 def _primary_risk_class(unit: Dict) -> str:
@@ -234,12 +186,20 @@ def _failure_mode_by_unit(unit_id: str) -> str:
     return mapping.get(unit_id, "Failure mode not mapped.")
 
 
-def _score_unit(unit: Dict, cue_tokens: Set[str], risk_classes: Set[str], stage: str) -> Tuple[float, int, int, int, float, List[str]]:
+def _score_unit(
+    unit: Dict,
+    cue_tokens: Set[str],
+    risk_classes: Set[str],
+    stage: str,
+    unit_matches: Dict[str, List[str]],
+) -> Tuple[float, int, int, int, float, List[str], List[str]]:
     tags = set(unit.get("tags", []))
     unit_tokens = tags | _tokenize_id(unit.get("id", ""))
 
-    trigger_hits = sorted(unit_tokens.intersection(cue_tokens))
-    trigger_match = len(trigger_hits)
+    matched_terms = unit_matches.get(unit.get("id", ""), [])
+    matched_tags = sorted(tag.split(":", 1)[1] for tag in matched_terms if tag.startswith("tag:"))
+    trigger_hits = sorted(set(matched_tags + list(unit_tokens.intersection(cue_tokens))))
+    trigger_match = len(matched_terms) or len(trigger_hits)
 
     unit_risk = _primary_risk_class(unit)
     risk_match = 1 if unit_risk and unit_risk in risk_classes else 0
@@ -258,14 +218,52 @@ def _score_unit(unit: Dict, cue_tokens: Set[str], risk_classes: Set[str], stage:
         + 0.10 * confidence_weight
     )
 
-    return score, trigger_match, risk_match, stage_match, confidence_weight, trigger_hits
+    return score, trigger_match, risk_match, stage_match, confidence_weight, trigger_hits, matched_terms
 
 
-def _select_mandatory(units: List[Dict], cue_tokens: Set[str], risk_classes: Set[str], stage: str) -> List[RouteResult]:
+BASE_BUDGET = 2
+
+
+def _compute_budget(words: List[str], risk_classes: Set[str], cue_tokens: Set[str]) -> int:
+    length_score = min(len(words) / 120.0, 2.0)
+    risk_score = len(risk_classes) * 0.7
+    cue_score = len(cue_tokens) * 0.15
+    raw = length_score + risk_score + cue_score
+
+    if raw < 0.7:
+        budget = 0
+    elif raw < 1.4:
+        budget = 2
+    elif raw < 2.2:
+        budget = 3
+    elif raw < 3.0:
+        budget = 4
+    elif raw < 3.8:
+        budget = 5
+    elif raw < 4.6:
+        budget = 6
+    elif raw < 5.4:
+        budget = 7
+    else:
+        budget = 8
+
+    if words:
+        return max(BASE_BUDGET, budget)
+    return BASE_BUDGET
+
+
+def _select_mandatory(
+    units: List[Dict],
+    cue_tokens: Set[str],
+    risk_classes: Set[str],
+    stage: str,
+    unit_matches: Dict[str, List[str]],
+    budget: int,
+) -> List[RouteResult]:
     candidates = []
     for unit in units:
-        score, trigger_match, risk_match, stage_match, confidence_weight, trigger_hits = _score_unit(
-            unit, cue_tokens, risk_classes, stage
+        score, trigger_match, risk_match, stage_match, confidence_weight, trigger_hits, matched_terms = _score_unit(
+            unit, cue_tokens, risk_classes, stage, unit_matches
         )
         risk_severity = unit.get("risk_severity", "medium")
         unit_risk = _primary_risk_class(unit)
@@ -284,6 +282,7 @@ def _select_mandatory(units: List[Dict], cue_tokens: Set[str], risk_classes: Set
                     confidence_weight=confidence_weight,
                     risk_severity=risk_severity,
                     matched_cues=trigger_hits,
+                    matched_terms=matched_terms,
                     failure_mode=_failure_mode_by_unit(unit["id"]),
                 )
             )
@@ -296,16 +295,25 @@ def _select_mandatory(units: List[Dict], cue_tokens: Set[str], risk_classes: Set
         )
     )
 
-    return candidates[:2]
+    max_mandatory = min(2, budget)
+    return candidates[:max_mandatory]
 
 
-def _select_contextual(units: List[Dict], cue_tokens: Set[str], risk_classes: Set[str], stage: str, exclude_ids: Set[str]) -> List[RouteResult]:
+def _select_contextual(
+    units: List[Dict],
+    cue_tokens: Set[str],
+    risk_classes: Set[str],
+    stage: str,
+    unit_matches: Dict[str, List[str]],
+    exclude_ids: Set[str],
+    budget: int,
+) -> List[RouteResult]:
     candidates = []
     for unit in units:
         if unit["id"] in exclude_ids:
             continue
-        score, trigger_match, risk_match, stage_match, confidence_weight, trigger_hits = _score_unit(
-            unit, cue_tokens, risk_classes, stage
+        score, trigger_match, risk_match, stage_match, confidence_weight, trigger_hits, matched_terms = _score_unit(
+            unit, cue_tokens, risk_classes, stage, unit_matches
         )
         if trigger_match == 0 and risk_match == 0:
             continue
@@ -323,19 +331,26 @@ def _select_contextual(units: List[Dict], cue_tokens: Set[str], risk_classes: Se
                 confidence_weight=confidence_weight,
                 risk_severity=unit.get("risk_severity", "medium"),
                 matched_cues=trigger_hits,
+                matched_terms=matched_terms,
                 failure_mode=_failure_mode_by_unit(unit["id"]),
             )
         )
 
     candidates.sort(key=lambda item: (-item.score, -item.trigger_match, item.unit_id))
-    return candidates[:3]
+    return candidates[:max(0, budget)]
 
 
-def _score_all(units: List[Dict], cue_tokens: Set[str], risk_classes: Set[str], stage: str) -> List[RouteResult]:
+def _score_all(
+    units: List[Dict],
+    cue_tokens: Set[str],
+    risk_classes: Set[str],
+    stage: str,
+    unit_matches: Dict[str, List[str]],
+) -> List[RouteResult]:
     candidates = []
     for unit in units:
-        score, trigger_match, risk_match, stage_match, confidence_weight, trigger_hits = _score_unit(
-            unit, cue_tokens, risk_classes, stage
+        score, trigger_match, risk_match, stage_match, confidence_weight, trigger_hits, matched_terms = _score_unit(
+            unit, cue_tokens, risk_classes, stage, unit_matches
         )
         if trigger_match == 0 and risk_match == 0:
             continue
@@ -351,6 +366,7 @@ def _score_all(units: List[Dict], cue_tokens: Set[str], risk_classes: Set[str], 
                 confidence_weight=confidence_weight,
                 risk_severity=unit.get("risk_severity", "medium"),
                 matched_cues=trigger_hits,
+                matched_terms=matched_terms,
                 failure_mode=_failure_mode_by_unit(unit["id"]),
             )
         )
@@ -358,7 +374,16 @@ def _score_all(units: List[Dict], cue_tokens: Set[str], risk_classes: Set[str], 
     return candidates
 
 
-def _format_log(task_id: str, stage: str, task_file: str, cue_tokens: Set[str], selected: List[RouteResult], near_misses: List[RouteResult]) -> str:
+def _format_log(
+    task_id: str,
+    stage: str,
+    task_file: str,
+    cue_tokens: Set[str],
+    budget: int,
+    suppressed_terms: Set[str],
+    selected: List[RouteResult],
+    near_misses: List[RouteResult],
+) -> str:
     lines = [
         "# Router Decision Log",
         "",
@@ -366,9 +391,11 @@ def _format_log(task_id: str, stage: str, task_file: str, cue_tokens: Set[str], 
         f"- Task id: {task_id}",
         f"- Stage: {stage}",
         f"- Task file: {task_file}",
+        f"- Budget: {budget}",
         "",
         "## Task Cues",
         f"- Cues: {', '.join(sorted(cue_tokens))}",
+        f"- Negation suppressed: {', '.join(sorted(suppressed_terms)) or 'none'}",
         "",
         "## Selected EUs",
     ]
@@ -376,6 +403,7 @@ def _format_log(task_id: str, stage: str, task_file: str, cue_tokens: Set[str], 
     for item in selected:
         lines.append(f"- {item.unit_id} | Channel: {item.channel} | Score: {item.score:.2f}")
         lines.append(f"  - Why selected? matched cues: {', '.join(item.matched_cues) or 'none'}")
+        lines.append(f"  - Match sources: {', '.join(item.matched_terms) or 'none'}")
         lines.append(f"  - What failure mode it prevents? {item.failure_mode}")
 
     lines.extend(["", "## Near Misses"])
@@ -386,6 +414,73 @@ def _format_log(task_id: str, stage: str, task_file: str, cue_tokens: Set[str], 
     return "\n".join(lines) + "\n"
 
 
+def _load_router_rules(path: str) -> Dict[str, Dict[str, List[str]]]:
+    if not os.path.exists(path):
+        return {"requires": {}, "excludes": {}}
+    data = json.loads(_read_text(path))
+    return {
+        "requires": data.get("requires", {}),
+        "excludes": data.get("excludes", {}),
+    }
+
+
+def _apply_rules(
+    selected: List[RouteResult],
+    scored_all: List[RouteResult],
+    rules: Dict[str, Dict[str, List[str]]],
+    budget: int,
+) -> List[RouteResult]:
+    by_id = {item.unit_id: item for item in selected}
+    scored_map = {item.unit_id: item for item in scored_all}
+
+    for unit_id, required_ids in rules.get("requires", {}).items():
+        if unit_id not in by_id:
+            continue
+        for required_id in required_ids:
+            if required_id in by_id:
+                continue
+            if required_id in scored_map:
+                required_item = scored_map[required_id]
+                by_id[required_id] = RouteResult(
+                    unit_id=required_item.unit_id,
+                    title=required_item.title,
+                    channel="R",
+                    score=required_item.score,
+                    trigger_match=required_item.trigger_match,
+                    risk_match=required_item.risk_match,
+                    stage_match=required_item.stage_match,
+                    confidence_weight=required_item.confidence_weight,
+                    risk_severity=required_item.risk_severity,
+                    matched_cues=required_item.matched_cues,
+                    matched_terms=required_item.matched_terms,
+                    failure_mode=required_item.failure_mode,
+                )
+
+    for unit_id, excluded_ids in rules.get("excludes", {}).items():
+        if unit_id not in by_id:
+            continue
+        for excluded_id in excluded_ids:
+            if excluded_id not in by_id:
+                continue
+            keep_id = unit_id
+            drop_id = excluded_id
+            if by_id[excluded_id].score > by_id[unit_id].score:
+                keep_id, drop_id = excluded_id, unit_id
+            if drop_id in by_id:
+                del by_id[drop_id]
+
+    channel_priority = {"A": 0, "R": 1, "B": 2}
+    ordered = sorted(
+        by_id.values(),
+        key=lambda item: (channel_priority.get(item.channel, 9), -item.score, item.unit_id),
+    )
+
+    if budget <= 0:
+        return []
+
+    return ordered[:budget]
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Route experience units for a task and stage.")
     parser.add_argument("--task-file", required=True, help="Path to task text file.")
@@ -394,6 +489,11 @@ def main() -> None:
         "--index-file",
         default=os.path.join("frontend-productization", "experience-index.json"),
         help="Path to experience-index.json.",
+    )
+    parser.add_argument(
+        "--rules-file",
+        default=os.path.join("frontend-productization", "router-rules.json"),
+        help="Path to router-rules.json.",
     )
     parser.add_argument(
         "--output-json",
@@ -415,15 +515,22 @@ def main() -> None:
     index = json.loads(_read_text(args.index_file))
     units = index.get("units", [])
 
-    cue_tokens, risk_classes, _ = _extract_cues(task_text)
+    cue_tokens, risk_classes, unit_matches, suppressed_terms = _extract_cues(task_text, units)
+    words = _tokenize_words(task_text)
+    budget = _compute_budget(words, risk_classes, cue_tokens)
+    rules = _load_router_rules(args.rules_file)
 
-    mandatory = _select_mandatory(units, cue_tokens, risk_classes, stage)
+    mandatory = _select_mandatory(units, cue_tokens, risk_classes, stage, unit_matches, budget)
     mandatory_ids = {item.unit_id for item in mandatory}
-    contextual = _select_contextual(units, cue_tokens, risk_classes, stage, mandatory_ids)
+    remaining_budget = max(0, budget - len(mandatory))
+    contextual = _select_contextual(
+        units, cue_tokens, risk_classes, stage, unit_matches, mandatory_ids, remaining_budget
+    )
 
     selected = mandatory + contextual
 
-    scored_all = _score_all(units, cue_tokens, risk_classes, stage)
+    scored_all = _score_all(units, cue_tokens, risk_classes, stage, unit_matches)
+    selected = _apply_rules(selected, scored_all, rules, budget)
 
     selected_ids = {item.unit_id for item in selected}
     near_misses = [item for item in scored_all if item.unit_id not in selected_ids][:3]
@@ -435,6 +542,8 @@ def main() -> None:
         "stage": stage,
         "task_file": args.task_file,
         "cue_tokens": sorted(cue_tokens),
+        "budget": budget,
+        "negation_suppressed": sorted(suppressed_terms),
         "selected": [item.__dict__ for item in selected],
         "near_misses": [item.__dict__ for item in near_misses],
     }
@@ -443,7 +552,16 @@ def main() -> None:
     with open(args.output_json, "w", encoding="utf-8") as handle:
         json.dump(result, handle, ensure_ascii=False, indent=2)
 
-    log_text = _format_log(task_id, stage, args.task_file, cue_tokens, selected, near_misses)
+    log_text = _format_log(
+        task_id,
+        stage,
+        args.task_file,
+        cue_tokens,
+        budget,
+        suppressed_terms,
+        selected,
+        near_misses,
+    )
     with open(args.output_log, "w", encoding="utf-8") as handle:
         handle.write(log_text)
 
