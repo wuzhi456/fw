@@ -1,0 +1,17 @@
+execution_order,planned_run_id,task_id,group,replicate,planned_run_dir,protocol_version,seed
+1,list-skill-r01,task-list-page,experience-skill,1,experiments/runs/task-list-page/experience-skill/rep-01,v2,20260524
+2,list-base-r01,task-list-page,baseline,1,experiments/runs/task-list-page/baseline/rep-01,v2,20260524
+3,list-super-r02,task-list-page,superpowers,2,experiments/runs/task-list-page/superpowers/rep-02,v2,20260524
+4,list-full-r01,task-list-page,full-prompt,1,experiments/runs/task-list-page/full-prompt/rep-01,v2,20260524
+5,list-base-r02,task-list-page,baseline,2,experiments/runs/task-list-page/baseline/rep-02,v2,20260524
+6,list-super-r01,task-list-page,superpowers,1,experiments/runs/task-list-page/superpowers/rep-01,v2,20260524
+7,list-full-r02,task-list-page,full-prompt,2,experiments/runs/task-list-page/full-prompt/rep-02,v2,20260524
+8,list-skill-r02,task-list-page,experience-skill,2,experiments/runs/task-list-page/experience-skill/rep-02,v2,20260524
+9,dash-full-r02,task-responsive-dashboard,full-prompt,2,experiments/runs/task-responsive-dashboard/full-prompt/rep-02,v2,20260524
+10,dash-super-r01,task-responsive-dashboard,superpowers,1,experiments/runs/task-responsive-dashboard/superpowers/rep-01,v2,20260524
+11,dash-skill-r01,task-responsive-dashboard,experience-skill,1,experiments/runs/task-responsive-dashboard/experience-skill/rep-01,v2,20260524
+12,dash-base-r02,task-responsive-dashboard,baseline,2,experiments/runs/task-responsive-dashboard/baseline/rep-02,v2,20260524
+13,dash-full-r01,task-responsive-dashboard,full-prompt,1,experiments/runs/task-responsive-dashboard/full-prompt/rep-01,v2,20260524
+14,dash-base-r01,task-responsive-dashboard,baseline,1,experiments/runs/task-responsive-dashboard/baseline/rep-01,v2,20260524
+15,dash-skill-r02,task-responsive-dashboard,experience-skill,2,experiments/runs/task-responsive-dashboard/experience-skill/rep-02,v2,20260524
+16,dash-super-r02,task-responsive-dashboard,superpowers,2,experiments/runs/task-responsive-dashboard/superpowers/rep-02,v2,20260524
