@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "requires": {
+    "form-async-validation-feedback": ["async-explicit-states"],
+    "form-submit-recovery": ["ux-fallback-recoverable-errors"]
+  },
+  "excludes": {},
+  "notes": {
+    "intent": "Seed minimal, deterministic dependencies. Expand carefully with evidence."
+  }
+}
