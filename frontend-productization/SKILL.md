@@ -34,7 +34,7 @@ running the router unless the fallback mode applies.
 After the router finishes, read:
 
 ```text
-experiments/routing/router-output.json
+experiments/routing/router-output-<task_id>.json
 ```
 
 Extract the `selected` array and collect each `unit_id`. These are the ONLY units
@@ -42,7 +42,7 @@ you are allowed to inject.
 
 ## Exception Handling (Mandatory)
 
-If `experiments/routing/router-output.json` is missing or invalid:
+If `experiments/routing/router-output-<task_id>.json` is missing or invalid:
 
 1. Re-run the router command once.
 2. If it still fails, switch to Fallback / Offline Mode.
@@ -70,8 +70,8 @@ frontend-productization/experiences/<unit_id>.md
 3. Convert those `injection.<stage>` lines into hard constraints for your next
 planning or coding step. Do not copy the whole experience file into the user chat.
 
-4. Inject no more than five total bullets for the stage, unless the user explicitly
-increases the budget.
+4. Do not exceed the selected budget from the router output unless the user explicitly
+increases it.
 
 ## Injection Output Format (Internal)
 
@@ -107,4 +107,25 @@ same stage-only injection rule. Do not show the whole packet to the user.
 - Do not bypass the router when tool execution is available.
 - Do not inject experience units that are not returned by the router.
 - Do not reveal full experience files or routing packets to the user.
-- Do not exceed the 3-5 unit budget unless the user explicitly expands it.
+- Do not exceed the selected budget unless the user explicitly expands it.
+
+## Supporting Scripts (Reference)
+
+- Build offline dense index (semantic routing prerequisites):
+
+```text
+python scripts/build_dense_index.py
+```
+
+- Batch routing for evaluation (produces per-task outputs):
+
+```text
+python scripts/run_all_routers.py --stage <plan|coding|review|test>
+```
+
+- Evaluate routing metrics:
+
+```text
+python scripts/evaluate_routing_metrics.py --router-dir experiments/routing/outputs-deterministic --output experiments/routing/routing-metrics-deterministic.csv
+python scripts/evaluate_routing_metrics.py --router-dir experiments/routing/outputs-semantic --output experiments/routing/routing-metrics-semantic.csv
+```

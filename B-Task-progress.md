@@ -1,18 +1,15 @@
 # B 任务进展与核心流程报告 (B-Task Process Report)
 
-### 角色定位
-**经验注入与路由负责人 (Experience Injection / Router Owner)**
-
-### 核心产出
-- **确定性路由器脚本**
-- **强指令集 SKILL.md**
-- **双层基准评估体系**（路由评估 + 执行评估）
+## 总览
+- **角色定位**：经验注入与路由负责人 (Experience Injection / Router Owner)
+- **当前状态**：路由器与评估链路可运行，语义路由离线化完成，探针任务标签补齐
+- **核心产出**：确定性路由器脚本、强指令集 SKILL.md、双层基准评估体系（路由评估 + 执行评估）
 
 
 ---
 ## 一、SKILL.md 核心执行流程详解
 
-重构后的 frontend-productization 技能已升级为面向大模型（AI Agent）的强指令集 (Directive Mode)。通过以下 7 个严格的步骤，确保 Agent 能够精准提取并注入 3-5 条前端产品化经验。
+重构后的 frontend-productization 技能已升级为面向大模型（AI Agent）的强指令集 (Directive Mode)。通过以下 7 个严格步骤，确保 Agent 能够精准提取并注入动态预算范围内的前端产品化经验。
 
 ### 1. 角色与激活条件 (Role & Activation)
 
@@ -100,9 +97,9 @@ python scripts/route_experience_units.py --task-file <PATH_TO_TASK_TEXT> --stage
 ---
 ## 三、结论与交接
 
-当前的 frontend-productization 机制已经超越了简单的文本清单，演变成了一个具备高鲁棒性、高可解释性且符合 Agentic Workflow（智能体工作流）工业级标准的动态注入系统。
+当前的 frontend-productization 机制已经从静态清单升级为**可路由、可解释、可评估**的动态注入系统。
 
-B 任务（路由与经验提取验证）已圆满闭环，项目可正式进入 C 任务阶段，开启端到端的大模型代码生成（Execution Benchmark）与最终盲评（Blind Review）。
+B 任务（路由与经验提取验证）已完成，项目可正式进入 C 任务阶段，开启端到端的大模型代码生成（Execution Benchmark）与最终盲评（Blind Review）。
 
 
 目前的项目框架：**A Skill** 负责从 github 仓库中提取经验；**B Skill** 负责对给定任务进行路由，在经验库中寻找合适经验，避免 Agent 在 Plan 和 Coding 阶段出现隐性错误或 bug。
@@ -120,7 +117,7 @@ B 任务（路由与经验提取验证）已圆满闭环，项目可正式进入
 ## 四、使用说明与文件清单（简要）
 
 ### 1. 运行流程
-- 生成离线向量：python scripts/build_dense_index.py
+- 若 dense-index.json 缺失，先生成离线向量：python scripts/build_dense_index.py
 - 批量路由：python scripts/run_all_routers.py --stage plan
 - 指标计算：python scripts/evaluate_routing_metrics.py --router-dir experiments/routing/outputs-deterministic --output experiments/routing/routing-metrics-deterministic.csv
 - 语义指标：python scripts/evaluate_routing_metrics.py --router-dir experiments/routing/outputs-semantic --output experiments/routing/routing-metrics-semantic.csv
