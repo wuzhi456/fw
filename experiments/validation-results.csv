@@ -1,0 +1,128 @@
+run_id,task_id,group,rep,check_id,check_type,status,evidence_path,notes
+golden-stub-list,task-list-page,,,smoke-list-render,smoke,pass,,
+golden-stub-list,task-list-page,,,smoke-list-filter,smoke,pass,,
+golden-stub-list,task-list-page,,,stress-list-empty,stress,pass,,
+golden-stub-list,task-list-page,,,stress-list-slow-fail-retry,stress,pass,,
+golden-stub-list,task-list-page,,,stress-list-stale-filter,stress,pass,,
+golden-stub-list,task-list-page,,,stress-list-large-page,stress,pass,,
+golden-stub-dash,task-responsive-dashboard,,,smoke-dash-render,smoke,pass,,
+golden-stub-dash,task-responsive-dashboard,,,smoke-dash-resize,smoke,pass,,
+golden-stub-dash,task-responsive-dashboard,,,stress-dash-narrow,stress,pass,,
+golden-stub-dash,task-responsive-dashboard,,,stress-dash-long-text,stress,pass,,
+golden-stub-dash,task-responsive-dashboard,,,stress-dash-partial-error,stress,pass,,
+golden-stub-dash,task-responsive-dashboard,,,stress-dash-dense-kpi,stress,pass,,
+phase1-eval-list,task-list-page,stub,1,smoke-list-render,smoke,pass,,
+phase1-eval-list,task-list-page,stub,1,smoke-list-filter,smoke,pass,,
+phase1-eval-list,task-list-page,stub,1,stress-list-empty,stress,pass,,
+phase1-eval-list,task-list-page,stub,1,stress-list-slow-fail-retry,stress,pass,,
+phase1-eval-list,task-list-page,stub,1,stress-list-stale-filter,stress,pass,,
+phase1-eval-list,task-list-page,stub,1,stress-list-large-page,stress,pass,,
+phase1-eval-dash,task-responsive-dashboard,stub,1,smoke-dash-render,smoke,pass,,
+phase1-eval-dash,task-responsive-dashboard,stub,1,smoke-dash-resize,smoke,pass,,
+phase1-eval-dash,task-responsive-dashboard,stub,1,stress-dash-narrow,stress,pass,,
+phase1-eval-dash,task-responsive-dashboard,stub,1,stress-dash-long-text,stress,pass,,
+phase1-eval-dash,task-responsive-dashboard,stub,1,stress-dash-partial-error,stress,pass,,
+phase1-eval-dash,task-responsive-dashboard,stub,1,stress-dash-dense-kpi,stress,pass,,
+eval-async-on-list-spec,task-list-page,experience-skill,1,smoke-list-render,smoke,fail,D:\26Spring\创新实践\FunctionWeaver\experiments\validation\test-results\task-list-page-smoke-list--4804f-ows-or-explicit-empty-state-chromium\test-failed-1.png,"Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+Locator: getByTestId('list-page')
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+[2m  - Expect ""toBeVisible"" with timeout 5000ms[22m
+[2m  - waiting for getByTestId('list-page')[22m
+
+
+  30 | }) => {
+  31 |   await page.goto('/');
+> 32 |   await expect(page.getByTestId('list-page')).toBeVisible();
+     |                                               ^
+  33 |   const rows = page."
+eval-async-on-list-spec,task-list-page,experience-skill,1,smoke-list-filter,smoke,fail,D:\26Spring\创新实践\FunctionWeaver\experiments\validation\test-results\task-list-page-smoke-list--6e76e-visible-list-or-empty-state-chromium\test-failed-1.png,"Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+Locator:  getByTestId('item-row')
+Expected: [32m3[39m
+Received: [31m0[39m
+Timeout:  5000ms
+
+Call log:
+[2m  - Expect ""toHaveCount"" with timeout 5000ms[22m
+[2m  - waiting for getByTestId('item-row')[22m
+[2m    14 × locator resolved to 0 elements[22m
+[2m       - unexpected value ""0""[22m
+
+
+  41 | }) => {
+  42 |   await page.goto('/');
+> 43 |   await expect(page.getByTestId('item-r"
+eval-async-on-list-spec,task-list-page,experience-skill,1,stress-list-empty,stress,fail,D:\26Spring\创新实践\FunctionWeaver\experiments\validation\test-results\task-list-page-stress-list-1044b-s-empty-state-without-crash-chromium\test-failed-1.png,"Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+Locator: getByTestId('empty-state')
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+[2m  - Expect ""toBeVisible"" with timeout 5000ms[22m
+[2m  - waiting for getByTestId('empty-state')[22m
+
+
+  63 |
+  64 |   await page.goto('/');
+> 65 |   await expect(page.getByTestId('empty-state')).toBeVisible();
+     |                                                 ^
+  66 |   await expect(page."
+eval-async-on-list-spec,task-list-page,experience-skill,1,stress-list-slow-fail-retry,stress,fail,D:\26Spring\创新实践\FunctionWeaver\experiments\validation\test-results\task-list-page-stress-list-687bc-oading-then-error-and-retry-chromium\test-failed-1.png,"Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+Locator: getByTestId('loading-state')
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+[2m  - Expect ""toBeVisible"" with timeout 5000ms[22m
+[2m  - waiting for getByTestId('loading-state')[22m
+
+
+  86 |
+  87 |   await page.goto('/');
+> 88 |   await expect(page.getByTestId('loading-state')).toBeVisible();
+     |                                                   ^
+  89 |   await expe"
+eval-async-on-list-spec,task-list-page,experience-skill,1,stress-list-stale-filter,stress,fail,D:\26Spring\创新实践\FunctionWeaver\experiments\validation\test-results\task-list-page-stress-list-a763a-nges-avoid-stale-data-flash-chromium\test-failed-1.png,"[31mTest timeout of 60000ms exceeded.[39m | Error: locator.fill: Test timeout of 60000ms exceeded.
+Call log:
+[2m  - waiting for getByTestId('search-input')[22m
+
+
+  113 |   await page.goto('/');
+  114 |   const search = page.getByTestId('search-input');
+> 115 |   await search.fill('slow');
+      |                ^
+  116 |   await search.fill('Beta');
+  117 |
+  118 |   await expect(page.getByTestId('item-row')).toHaveCount(1, { timeout: 10_000 });
+    at D:\26Spring\创新实践\FunctionWeaver\experim"
+eval-async-on-list-spec,task-list-page,experience-skill,1,stress-list-large-page,stress,fail,D:\26Spring\创新实践\FunctionWeaver\experiments\validation\test-results\task-list-page-stress-list-6c87b-page-renders-within-timeout-chromium\test-failed-1.png,"Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+Locator: getByTestId('item-row').first()
+Expected: visible
+Timeout: 15000ms
+Error: element(s) not found
+
+Call log:
+[2m  - Expect ""toBeVisible"" with timeout 15000ms[22m
+[2m  - waiting for getByTestId('item-row').first()[22m
+
+
+  138 |
+  139 |   await page.goto('/');
+> 140 |   await expect(page.getByTestId('item-row').first()).toBeVisible({ timeout: 15_000 });
+      |                                      "
+golden-stub-dash-recheck,task-responsive-dashboard,,,smoke-dash-render,smoke,pass,,
+golden-stub-dash-recheck,task-responsive-dashboard,,,smoke-dash-resize,smoke,pass,,
+golden-stub-dash-recheck,task-responsive-dashboard,,,stress-dash-narrow,stress,pass,,
+golden-stub-dash-recheck,task-responsive-dashboard,,,stress-dash-long-text,stress,pass,,
+golden-stub-dash-recheck,task-responsive-dashboard,,,stress-dash-partial-error,stress,pass,,
+golden-stub-dash-recheck,task-responsive-dashboard,,,stress-dash-dense-kpi,stress,pass,,

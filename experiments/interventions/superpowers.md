@@ -9,6 +9,16 @@
 3. Use the same frozen requirement text from the task file referenced by `base_requirement_path`.
 4. Do **not** attach `frontend-productization` Skill or `experiments/full-prompt-checklist.md`.
 
+## Validation contract (Protocol v2 — all groups equally)
+
+Also attach:
+
+`experiments/tasks/VALIDATION-CONTRACT.md`
+
+- Use every listed `data-testid` exactly.
+- Implement the listed API paths and JSON shapes.
+- Do **not** add Playwright specs or validation files to `output/`.
+
 ## Fairness constraints (protocol v2 §3)
 
 - Same bash / npm / test / browser tool permissions as other groups.

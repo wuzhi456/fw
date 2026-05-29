@@ -1,17 +1,21 @@
-# Per-run artifact layout
+# Per-run artifact layout (Protocol v2)
 
-Each completed run should populate a directory matching the frozen schedule in `experiments/randomization-table-27.csv` or `randomization-table-mvp-18.csv`:
+Formal v2 schedule: [`../randomization-table-v2-16.csv`](../randomization-table-v2-16.csv)  
+Scaffold: `node experiments/scripts/scaffold-v2-runs.mjs`
 
 ```text
 experiments/runs/<task_id>/<group>/rep-XX/
-  metadata.json          # copy from ../templates/run-metadata.template.json and fill
-  prompt/                # optional: exact user prompt + intervention text saved as files
-  output/                # generated project tree (or zip extract)
-  logs.txt               # optional: tool transcript excerpt
+  metadata.json          # from ../templates/run-metadata.template.json
+  output/                # generated project (gitignored)
+  validation/            # optional: per-run screenshots/logs
 ```
 
-`task_id` is one of: `task-list-page`, `task-async-form`, `task-responsive-dashboard`.  
-`group` is one of: `baseline`, `experience-skill`, `full-prompt`.  
-`rep-XX` matches the `replicate` column (`01`–`03`).
+**v2 `task_id`:** `task-list-page`, `task-responsive-dashboard`  
+**v2 `group`:** `baseline`, `experience-skill`, `full-prompt`, `superpowers`  
+**v2 replicates:** `rep-01`, `rep-02`
 
-After anonymization, copy scorer-facing bundles to `experiments/anonymous-submissions/` (see that folder’s README).
+Exploratory async pilot lives under `task-async-form/` (9 runs, not v2 formal).
+
+Agents must implement hooks in [`../tasks/VALIDATION-CONTRACT.md`](../tasks/VALIDATION-CONTRACT.md) (all groups equally).
+
+After anonymization, copy scorer bundles to `experiments/anonymous-submissions/`.

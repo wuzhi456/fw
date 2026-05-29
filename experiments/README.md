@@ -1,5 +1,7 @@
 # Experiments workspace
 
+**C 任务执行手册（v2）：** [`C-EXECUTION-RUNBOOK.md`](C-EXECUTION-RUNBOOK.md) — 给 Agent 按 Phase 0→5 执行。
+
 P4 and P5 are **human-controlled** per `experiment-protocol.md`.
 
 Agents may add templates and scripts; batch execution, retries, anonymization, scoring, and conclusions require explicit human approval.
@@ -12,6 +14,8 @@ Agents may add templates and scripts; batch execution, retries, anonymization, s
 | `randomization-table-v2-16.csv` | v2 schedule: 2 tasks × 4 groups × 2 reps (seed `20260524`). |
 | `interventions/superpowers.md` | Fourth arm intervention (sign-off pending). |
 | `validation/` | Endpoint A smoke/stress scripts + `CHECK_CATALOG.md`. |
+| `tasks/VALIDATION-CONTRACT.md` | **Agent test hooks** (`data-testid` + API); all four groups equally. |
+| `scripts/scaffold-v2-runs.mjs` | Phase 2: create 16 run dirs + run-log scaffold rows. |
 | `validation-results.csv` | Per-check results (C maintains). |
 | `scores-v2.csv` | Endpoint B rubric scores (human + LLM parallel). |
 | `analysis-v2.md` | Dual-endpoint analysis (C deliverable). |

@@ -8,3 +8,13 @@
 4. Record `injected_experience_count` and approximate `context_length_estimate` in the run log.
 
 Do not paste `experiments/full-prompt-checklist.md` for this group.
+
+## Validation contract (Protocol v2 — all groups equally)
+
+Also attach:
+
+`experiments/tasks/VALIDATION-CONTRACT.md`
+
+- Use every listed `data-testid` exactly.
+- Implement the listed API paths and JSON shapes.
+- Do **not** add Playwright specs or validation files to `output/`.
