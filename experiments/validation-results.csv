@@ -126,3 +126,238 @@ golden-stub-dash-recheck,task-responsive-dashboard,,,stress-dash-narrow,stress,p
 golden-stub-dash-recheck,task-responsive-dashboard,,,stress-dash-long-text,stress,pass,,
 golden-stub-dash-recheck,task-responsive-dashboard,,,stress-dash-partial-error,stress,pass,,
 golden-stub-dash-recheck,task-responsive-dashboard,,,stress-dash-dense-kpi,stress,pass,,
+preflight-list,task-list-page,,,smoke-list-render,smoke,pass,,
+preflight-list,task-list-page,,,smoke-list-filter,smoke,pass,,
+preflight-list,task-list-page,,,stress-list-empty,stress,pass,,
+preflight-list,task-list-page,,,stress-list-slow-fail-retry,stress,pass,,
+preflight-list,task-list-page,,,stress-list-stale-filter,stress,pass,,
+preflight-list,task-list-page,,,stress-list-large-page,stress,pass,,
+list-skill-r01,task-list-page,experience-skill,1,smoke-list-render,smoke,pass,,
+list-skill-r01,task-list-page,experience-skill,1,smoke-list-filter,smoke,pass,,
+list-skill-r01,task-list-page,experience-skill,1,stress-list-empty,stress,pass,,
+list-skill-r01,task-list-page,experience-skill,1,stress-list-slow-fail-retry,stress,pass,,
+list-skill-r01,task-list-page,experience-skill,1,stress-list-stale-filter,stress,pass,,
+list-skill-r01,task-list-page,experience-skill,1,stress-list-large-page,stress,pass,,
+list-base-r01,task-list-page,baseline,1,smoke-list-render,smoke,pass,,
+list-base-r01,task-list-page,baseline,1,smoke-list-filter,smoke,pass,,
+list-base-r01,task-list-page,baseline,1,stress-list-empty,stress,pass,,
+list-base-r01,task-list-page,baseline,1,stress-list-slow-fail-retry,stress,pass,,
+list-base-r01,task-list-page,baseline,1,stress-list-stale-filter,stress,pass,,
+list-base-r01,task-list-page,baseline,1,stress-list-large-page,stress,pass,,
+list-super-r02,task-list-page,superpowers,2,smoke-list-render,smoke,pass,,
+list-super-r02,task-list-page,superpowers,2,smoke-list-filter,smoke,pass,,
+list-super-r02,task-list-page,superpowers,2,stress-list-empty,stress,pass,,
+list-super-r02,task-list-page,superpowers,2,stress-list-slow-fail-retry,stress,pass,,
+list-super-r02,task-list-page,superpowers,2,stress-list-stale-filter,stress,pass,,
+list-super-r02,task-list-page,superpowers,2,stress-list-large-page,stress,pass,,
+list-full-r01,task-list-page,full-prompt,1,smoke-list-render,smoke,pass,,
+list-full-r01,task-list-page,full-prompt,1,smoke-list-filter,smoke,fail,D:\26Spring\创新实践\FunctionWeaver\experiments\validation\test-results\task-list-page-smoke-list--6e76e-visible-list-or-empty-state-chromium\test-failed-1.png,"Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+Locator:  getByTestId('item-row')
+Expected: [32m1[39m
+Received: [31m3[39m
+Timeout:  5000ms
+
+Call log:
+[2m  - Expect ""toHaveCount"" with timeout 5000ms[22m
+[2m  - waiting for getByTestId('item-row')[22m
+[2m    14 × locator resolved to 3 elements[22m
+[2m       - unexpected value ""3""[22m
+
+
+  44 |
+  45 |   await page.getByTestId('search-input').fill('Beta');
+> 46 |   await expect(p"
+list-full-r01,task-list-page,full-prompt,1,stress-list-empty,stress,pass,,
+list-full-r01,task-list-page,full-prompt,1,stress-list-slow-fail-retry,stress,pass,,
+list-full-r01,task-list-page,full-prompt,1,stress-list-stale-filter,stress,pass,,
+list-full-r01,task-list-page,full-prompt,1,stress-list-large-page,stress,pass,,
+list-base-r02,task-list-page,,,smoke-list-render,smoke,pass,,
+list-base-r02,task-list-page,,,smoke-list-filter,smoke,pass,,
+list-base-r02,task-list-page,,,stress-list-empty,stress,pass,,
+list-base-r02,task-list-page,,,stress-list-slow-fail-retry,stress,pass,,
+list-base-r02,task-list-page,,,stress-list-stale-filter,stress,pass,,
+list-base-r02,task-list-page,,,stress-list-large-page,stress,pass,,
+list-full-r02,task-list-page,full-prompt,2,smoke-list-render,smoke,pass,,
+list-full-r02,task-list-page,full-prompt,2,smoke-list-filter,smoke,pass,,
+list-full-r02,task-list-page,full-prompt,2,stress-list-empty,stress,pass,,
+list-full-r02,task-list-page,full-prompt,2,stress-list-slow-fail-retry,stress,pass,,
+list-full-r02,task-list-page,full-prompt,2,stress-list-stale-filter,stress,pass,,
+list-full-r02,task-list-page,full-prompt,2,stress-list-large-page,stress,pass,,
+list-super-r01,task-list-page,,,smoke-list-render,smoke,pass,,
+list-super-r01,task-list-page,,,smoke-list-filter,smoke,pass,,
+list-super-r01,task-list-page,,,stress-list-empty,stress,pass,,
+list-super-r01,task-list-page,,,stress-list-slow-fail-retry,stress,pass,,
+list-super-r01,task-list-page,,,stress-list-stale-filter,stress,pass,,
+list-super-r01,task-list-page,,,stress-list-large-page,stress,pass,,
+list-skill-r02,task-list-page,experience-skill,2,smoke-list-render,smoke,pass,,
+list-skill-r02,task-list-page,experience-skill,2,smoke-list-filter,smoke,fail,D:\26Spring\创新实践\FunctionWeaver\experiments\validation\test-results\task-list-page-smoke-list--6e76e-visible-list-or-empty-state-chromium\test-failed-1.png,"Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+Locator:  getByTestId('item-row')
+Expected: [32m1[39m
+Received: [31m3[39m
+Timeout:  5000ms
+
+Call log:
+[2m  - Expect ""toHaveCount"" with timeout 5000ms[22m
+[2m  - waiting for getByTestId('item-row')[22m
+[2m    - locator resolved to 0 elements[22m
+[2m    - unexpected value ""0""[22m
+[2m    13 × locator resolved to 3 elements[22m
+[2m       - unexpected value ""3""[22m
+
+
+  44 |
+  4"
+list-skill-r02,task-list-page,experience-skill,2,stress-list-empty,stress,pass,,
+list-skill-r02,task-list-page,experience-skill,2,stress-list-slow-fail-retry,stress,pass,,
+list-skill-r02,task-list-page,experience-skill,2,stress-list-stale-filter,stress,pass,,
+list-skill-r02,task-list-page,experience-skill,2,stress-list-large-page,stress,pass,,
+list-skill-r02,task-list-page,experience-skill,2,smoke-list-render,smoke,pass,,
+list-skill-r02,task-list-page,experience-skill,2,smoke-list-filter,smoke,pass,,
+list-skill-r02,task-list-page,experience-skill,2,stress-list-empty,stress,pass,,
+list-skill-r02,task-list-page,experience-skill,2,stress-list-slow-fail-retry,stress,pass,,
+list-skill-r02,task-list-page,experience-skill,2,stress-list-stale-filter,stress,pass,,
+list-skill-r02,task-list-page,experience-skill,2,stress-list-large-page,stress,pass,,
+list-base-r02,task-list-page,baseline,2,smoke-list-render,smoke,pass,,
+list-base-r02,task-list-page,baseline,2,smoke-list-filter,smoke,pass,,
+list-base-r02,task-list-page,baseline,2,stress-list-empty,stress,pass,,
+list-base-r02,task-list-page,baseline,2,stress-list-slow-fail-retry,stress,pass,,
+list-base-r02,task-list-page,baseline,2,stress-list-stale-filter,stress,pass,,
+list-base-r02,task-list-page,baseline,2,stress-list-large-page,stress,pass,,
+list-super-r01,task-list-page,superpowers,1,smoke-list-render,smoke,pass,,
+list-super-r01,task-list-page,superpowers,1,smoke-list-filter,smoke,pass,,
+list-super-r01,task-list-page,superpowers,1,stress-list-empty,stress,pass,,
+list-super-r01,task-list-page,superpowers,1,stress-list-slow-fail-retry,stress,pass,,
+list-super-r01,task-list-page,superpowers,1,stress-list-stale-filter,stress,pass,,
+list-super-r01,task-list-page,superpowers,1,stress-list-large-page,stress,pass,,
+list-full-r02,task-list-page,full-prompt,2,smoke-list-render,smoke,pass,,
+list-full-r02,task-list-page,full-prompt,2,smoke-list-filter,smoke,pass,,
+list-full-r02,task-list-page,full-prompt,2,stress-list-empty,stress,pass,,
+list-full-r02,task-list-page,full-prompt,2,stress-list-slow-fail-retry,stress,pass,,
+list-full-r02,task-list-page,full-prompt,2,stress-list-stale-filter,stress,pass,,
+list-full-r02,task-list-page,full-prompt,2,stress-list-large-page,stress,pass,,
+list-skill-r02,task-list-page,experience-skill,2,smoke-list-render,smoke,pass,,
+list-skill-r02,task-list-page,experience-skill,2,smoke-list-filter,smoke,pass,,
+list-skill-r02,task-list-page,experience-skill,2,stress-list-empty,stress,pass,,
+list-skill-r02,task-list-page,experience-skill,2,stress-list-slow-fail-retry,stress,pass,,
+list-skill-r02,task-list-page,experience-skill,2,stress-list-stale-filter,stress,pass,,
+list-skill-r02,task-list-page,experience-skill,2,stress-list-large-page,stress,pass,,
+dash-full-r02,task-responsive-dashboard,full-prompt,2,smoke-dash-render,smoke,pass,,
+dash-full-r02,task-responsive-dashboard,full-prompt,2,smoke-dash-resize,smoke,pass,,
+dash-full-r02,task-responsive-dashboard,full-prompt,2,stress-dash-narrow,stress,pass,,
+dash-full-r02,task-responsive-dashboard,full-prompt,2,stress-dash-long-text,stress,pass,,
+dash-full-r02,task-responsive-dashboard,full-prompt,2,stress-dash-partial-error,stress,fail,D:\26Spring\创新实践\FunctionWeaver\experiments\validation\test-results\task-responsive-dashboard--580e2-PI-error-leaves-rest-usable-chromium\test-failed-1.png,"Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+Locator: getByTestId('kpi-error')
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+[2m  - Expect ""toBeVisible"" with timeout 5000ms[22m
+[2m  - waiting for getByTestId('kpi-error')[22m
+
+
+  114 |   await page.goto('/');
+  115 |
+> 116 |   await expect(page.getByTestId('kpi-error')).toBeVisible();
+      |                                               ^
+  117 |   await expect(page.get"
+dash-full-r02,task-responsive-dashboard,full-prompt,2,stress-dash-dense-kpi,stress,pass,,
+dash-skill-r01,task-responsive-dashboard,,,smoke-dash-render,smoke,pass,,
+dash-skill-r01,task-responsive-dashboard,,,smoke-dash-resize,smoke,pass,,
+dash-skill-r01,task-responsive-dashboard,,,stress-dash-narrow,stress,pass,,
+dash-skill-r01,task-responsive-dashboard,,,stress-dash-long-text,stress,pass,,
+dash-skill-r01,task-responsive-dashboard,,,stress-dash-partial-error,stress,pass,,
+dash-skill-r01,task-responsive-dashboard,,,stress-dash-dense-kpi,stress,pass,,
+dash-base-r02,task-responsive-dashboard,,,smoke-dash-render,smoke,pass,,
+dash-base-r02,task-responsive-dashboard,,,smoke-dash-resize,smoke,pass,,
+dash-base-r02,task-responsive-dashboard,,,stress-dash-narrow,stress,pass,,
+dash-base-r02,task-responsive-dashboard,,,stress-dash-long-text,stress,pass,,
+dash-base-r02,task-responsive-dashboard,,,stress-dash-partial-error,stress,pass,,
+dash-base-r02,task-responsive-dashboard,,,stress-dash-dense-kpi,stress,pass,,
+dash-full-r02,task-responsive-dashboard,full-prompt,2,smoke-dash-render,smoke,pass,,
+dash-full-r02,task-responsive-dashboard,full-prompt,2,smoke-dash-resize,smoke,pass,,
+dash-full-r02,task-responsive-dashboard,full-prompt,2,stress-dash-narrow,stress,pass,,
+dash-full-r02,task-responsive-dashboard,full-prompt,2,stress-dash-long-text,stress,pass,,
+dash-full-r02,task-responsive-dashboard,full-prompt,2,stress-dash-partial-error,stress,pass,,
+dash-full-r02,task-responsive-dashboard,full-prompt,2,stress-dash-dense-kpi,stress,pass,,
+dash-super-r01,task-responsive-dashboard,,,smoke-dash-render,smoke,pass,,
+dash-super-r01,task-responsive-dashboard,,,smoke-dash-resize,smoke,pass,,
+dash-super-r01,task-responsive-dashboard,,,stress-dash-narrow,stress,pass,,
+dash-super-r01,task-responsive-dashboard,,,stress-dash-long-text,stress,pass,,
+dash-super-r01,task-responsive-dashboard,,,stress-dash-partial-error,stress,pass,,
+dash-super-r01,task-responsive-dashboard,,,stress-dash-dense-kpi,stress,pass,,
+dash-full-r02,task-responsive-dashboard,full-prompt,2,smoke-dash-render,smoke,pass,,
+dash-full-r02,task-responsive-dashboard,full-prompt,2,smoke-dash-resize,smoke,pass,,
+dash-full-r02,task-responsive-dashboard,full-prompt,2,stress-dash-narrow,stress,pass,,
+dash-full-r02,task-responsive-dashboard,full-prompt,2,stress-dash-long-text,stress,pass,,
+dash-full-r02,task-responsive-dashboard,full-prompt,2,stress-dash-partial-error,stress,pass,,
+dash-full-r02,task-responsive-dashboard,full-prompt,2,stress-dash-dense-kpi,stress,pass,,
+dash-super-r01,task-responsive-dashboard,superpowers,1,smoke-dash-render,smoke,pass,,
+dash-super-r01,task-responsive-dashboard,superpowers,1,smoke-dash-resize,smoke,pass,,
+dash-super-r01,task-responsive-dashboard,superpowers,1,stress-dash-narrow,stress,pass,,
+dash-super-r01,task-responsive-dashboard,superpowers,1,stress-dash-long-text,stress,pass,,
+dash-super-r01,task-responsive-dashboard,superpowers,1,stress-dash-partial-error,stress,pass,,
+dash-super-r01,task-responsive-dashboard,superpowers,1,stress-dash-dense-kpi,stress,pass,,
+dash-skill-r01,task-responsive-dashboard,experience-skill,1,smoke-dash-render,smoke,pass,,
+dash-skill-r01,task-responsive-dashboard,experience-skill,1,smoke-dash-resize,smoke,pass,,
+dash-skill-r01,task-responsive-dashboard,experience-skill,1,stress-dash-narrow,stress,pass,,
+dash-skill-r01,task-responsive-dashboard,experience-skill,1,stress-dash-long-text,stress,pass,,
+dash-skill-r01,task-responsive-dashboard,experience-skill,1,stress-dash-partial-error,stress,pass,,
+dash-skill-r01,task-responsive-dashboard,experience-skill,1,stress-dash-dense-kpi,stress,pass,,
+dash-base-r02,task-responsive-dashboard,baseline,2,smoke-dash-render,smoke,pass,,
+dash-base-r02,task-responsive-dashboard,baseline,2,smoke-dash-resize,smoke,pass,,
+dash-base-r02,task-responsive-dashboard,baseline,2,stress-dash-narrow,stress,pass,,
+dash-base-r02,task-responsive-dashboard,baseline,2,stress-dash-long-text,stress,pass,,
+dash-base-r02,task-responsive-dashboard,baseline,2,stress-dash-partial-error,stress,pass,,
+dash-base-r02,task-responsive-dashboard,baseline,2,stress-dash-dense-kpi,stress,pass,,
+dash-skill-r02,task-responsive-dashboard,experience-skill,2,smoke-dash-render,smoke,pass,,
+dash-skill-r02,task-responsive-dashboard,experience-skill,2,smoke-dash-resize,smoke,pass,,
+dash-skill-r02,task-responsive-dashboard,experience-skill,2,stress-dash-narrow,stress,pass,,
+dash-skill-r02,task-responsive-dashboard,experience-skill,2,stress-dash-long-text,stress,pass,,
+dash-skill-r02,task-responsive-dashboard,experience-skill,2,stress-dash-partial-error,stress,pass,,
+dash-skill-r02,task-responsive-dashboard,experience-skill,2,stress-dash-dense-kpi,stress,pass,,
+dash-super-r02,task-responsive-dashboard,superpowers,2,smoke-dash-render,smoke,pass,,
+dash-super-r02,task-responsive-dashboard,superpowers,2,smoke-dash-resize,smoke,pass,,
+dash-super-r02,task-responsive-dashboard,superpowers,2,stress-dash-narrow,stress,pass,,
+dash-super-r02,task-responsive-dashboard,superpowers,2,stress-dash-long-text,stress,pass,,
+dash-super-r02,task-responsive-dashboard,superpowers,2,stress-dash-partial-error,stress,pass,,
+dash-super-r02,task-responsive-dashboard,superpowers,2,stress-dash-dense-kpi,stress,pass,,
+dash-full-r01,task-responsive-dashboard,,,smoke-dash-render,smoke,pass,,
+dash-full-r01,task-responsive-dashboard,,,smoke-dash-resize,smoke,pass,,
+dash-full-r01,task-responsive-dashboard,,,stress-dash-narrow,stress,pass,,
+dash-full-r01,task-responsive-dashboard,,,stress-dash-long-text,stress,pass,,
+dash-full-r01,task-responsive-dashboard,,,stress-dash-partial-error,stress,pass,,
+dash-full-r01,task-responsive-dashboard,,,stress-dash-dense-kpi,stress,pass,,
+dash-base-r01,task-responsive-dashboard,baseline,1,smoke-dash-render,smoke,pass,,
+dash-base-r01,task-responsive-dashboard,baseline,1,smoke-dash-resize,smoke,pass,,
+dash-base-r01,task-responsive-dashboard,baseline,1,stress-dash-narrow,stress,pass,,
+dash-base-r01,task-responsive-dashboard,baseline,1,stress-dash-long-text,stress,pass,,
+dash-base-r01,task-responsive-dashboard,baseline,1,stress-dash-partial-error,stress,pass,,
+dash-base-r01,task-responsive-dashboard,baseline,1,stress-dash-dense-kpi,stress,pass,,
+dash-full-r01,task-responsive-dashboard,full-prompt,1,smoke-dash-render,smoke,pass,,
+dash-full-r01,task-responsive-dashboard,full-prompt,1,smoke-dash-resize,smoke,pass,,
+dash-full-r01,task-responsive-dashboard,full-prompt,1,stress-dash-narrow,stress,pass,,
+dash-full-r01,task-responsive-dashboard,full-prompt,1,stress-dash-long-text,stress,pass,,
+dash-full-r01,task-responsive-dashboard,full-prompt,1,stress-dash-partial-error,stress,pass,,
+dash-full-r01,task-responsive-dashboard,full-prompt,1,stress-dash-dense-kpi,stress,pass,,
+dash-base-r01,task-responsive-dashboard,baseline,1,smoke-dash-render,smoke,pass,,
+dash-base-r01,task-responsive-dashboard,baseline,1,smoke-dash-resize,smoke,pass,,
+dash-base-r01,task-responsive-dashboard,baseline,1,stress-dash-narrow,stress,pass,,
+dash-base-r01,task-responsive-dashboard,baseline,1,stress-dash-long-text,stress,pass,,
+dash-base-r01,task-responsive-dashboard,baseline,1,stress-dash-partial-error,stress,pass,,
+dash-base-r01,task-responsive-dashboard,baseline,1,stress-dash-dense-kpi,stress,pass,,
+dash-skill-r02,task-responsive-dashboard,experience-skill,2,smoke-dash-render,smoke,pass,,
+dash-skill-r02,task-responsive-dashboard,experience-skill,2,smoke-dash-resize,smoke,pass,,
+dash-skill-r02,task-responsive-dashboard,experience-skill,2,stress-dash-narrow,stress,pass,,
+dash-skill-r02,task-responsive-dashboard,experience-skill,2,stress-dash-long-text,stress,pass,,
+dash-skill-r02,task-responsive-dashboard,experience-skill,2,stress-dash-partial-error,stress,pass,,
+dash-skill-r02,task-responsive-dashboard,experience-skill,2,stress-dash-dense-kpi,stress,pass,,
+dash-super-r02,task-responsive-dashboard,superpowers,2,smoke-dash-render,smoke,pass,,
+dash-super-r02,task-responsive-dashboard,superpowers,2,smoke-dash-resize,smoke,pass,,
+dash-super-r02,task-responsive-dashboard,superpowers,2,stress-dash-narrow,stress,pass,,
+dash-super-r02,task-responsive-dashboard,superpowers,2,stress-dash-long-text,stress,pass,,
+dash-super-r02,task-responsive-dashboard,superpowers,2,stress-dash-partial-error,stress,pass,,
+dash-super-r02,task-responsive-dashboard,superpowers,2,stress-dash-dense-kpi,stress,pass,,

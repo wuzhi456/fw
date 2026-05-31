@@ -478,10 +478,10 @@ Phase 6  mini-repo 附录（可选）
 
 | 项 | 签字 | 日期 |
 | --- | --- | --- |
-| superpowers.md | | |
+| superpowers.md | 负责人 | 2026-05-29 |
 | 双 endpoint 公式 | | |
 | CHECK_CATALOG 冻结 | | |
-| 首次 v2 run 开跑 | | |
+| 首次 v2 run 开跑 | C | 2026-05-29 |
 
 ---
 

@@ -1,34 +1,35 @@
 # Router Decision Log
 
 ## Task
-- Task id: task-async-form
-- Stage: plan
-- Task file: experiments\tasks\task-async-form.md
+- Task id: task-responsive-dashboard
+- Stage: coding
+- Task file: experiments/tasks/task-responsive-dashboard.md
+- Budget: 4
 
 ## Task Cues
-- Cues: async, form, mutation, request, ux
+- Cues: admin, dashboard, layout, responsive
+- Negation suppressed: none
 
 ## Selected EUs
-- async-explicit-states | Channel: A | Score: 1.22
-  - Why selected? matched cues: async, request
-  - What failure mode it prevents? No explicit loading/error/empty state for async data.
-- form-duplicate-submit-guard | Channel: A | Score: 1.22
-  - Why selected? matched cues: form, mutation
-  - What failure mode it prevents? Duplicate submits trigger repeated mutations.
-- form-async-validation-feedback | Channel: B | Score: 1.25
-  - Why selected? matched cues: async, form
-  - What failure mode it prevents? Async validation lacks per-field feedback and debouncing.
-- form-submit-recovery | Channel: B | Score: 0.90
-  - Why selected? matched cues: form
-  - What failure mode it prevents? Failed submit loses user input or lacks safe retry.
-- ux-empty-state-actionable | Channel: B | Score: 0.90
-  - Why selected? matched cues: ux
-  - What failure mode it prevents? Empty states lack guidance for next steps.
+- responsive-dense-dashboard-layout | Channel: A | Score: 1.57
+  - Why selected? matched cues: dashboard, layout, responsive
+  - Match sources: tag:responsive, tag:dashboard, tag:layout
+  - What failure mode it prevents? Dense dashboard lacks responsive grid constraints.
+- responsive-mobile-navigation-density | Channel: A | Score: 1.22
+  - Why selected? matched cues: admin, responsive
+  - Match sources: tag:responsive, tag:admin
+  - What failure mode it prevents? Navigation density blocks mobile usability.
+- responsive-long-text-overflow | Channel: B | Score: 0.87
+  - Why selected? matched cues: responsive
+  - Match sources: tag:responsive
+  - What failure mode it prevents? Long identifiers overflow layout without handling.
+- ux-error-boundary-granularity | Channel: B | Score: 0.87
+  - Why selected? matched cues: dashboard
+  - Match sources: tag:dashboard
+  - What failure mode it prevents? Errors take down too much UI without isolation.
 
 ## Near Misses
-- async-retry-recover | Score: 0.87
+- ux-empty-state-actionable | Score: 0.55
   - Why excluded? budget full or lower score
-- async-stale-cancel | Score: 0.87
-  - Why excluded? budget full or lower score
-- ux-error-boundary-granularity | Score: 0.84
+- ux-fallback-recoverable-errors | Score: 0.52
   - Why excluded? budget full or lower score

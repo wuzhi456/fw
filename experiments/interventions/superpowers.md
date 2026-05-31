@@ -29,4 +29,4 @@ Also attach:
 
 Strong **general-purpose agent** baseline — not a strawman. If experience-skill beats superpowers on **both** validation and rubric endpoints, the domain routing claim is stronger.
 
-**Sign-off:** pending project owner approval before first v2 run.
+**Sign-off:** approved 2026-05-29 (project owner).

@@ -1,0 +1,4 @@
+__pycache__/
+*.py[cod]
+experiments/anon-map.operator-only.csv
+experiments/runs/**/generation-notes.json
